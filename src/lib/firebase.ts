@@ -1,4 +1,3 @@
-'use server';
 import { initializeApp, getApps, getApp } from "firebase/app";
 
 const firebaseConfig = {
