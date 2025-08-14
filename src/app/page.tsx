@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Building, Wrench as WrenchIconLucid, HandMetal, Palette, Utensils } from 'lucide-react';
+import { Search, Building, Wrench, HandMetal, Palette, Utensils, SprayCan } from 'lucide-react';
 import JobCard from '@/components/job-card';
 import Link from 'next/link';
 
@@ -41,20 +41,20 @@ const featuredJobs = [
 
 const categories = [
   { name: 'البناء والإنشاءات', icon: <Building className="h-8 w-8" /> },
-  { name: 'الصيانة', icon: <WrenchIconLucid className="h-8 w-8" /> },
+  { name: 'الصيانة', icon: <Wrench className="h-8 w-8" /> },
   { name: 'الحرف اليدوية', icon: <HandMetal className="h-8 w-8" /> },
   { name: 'الأعمال الفنية', icon: <Palette className="h-8 w-8" /> },
   { name: 'المجال الغذائي', icon: <Utensils className="h-8 w-8" /> },
-  { name: 'السباكة', icon: <WrenchIconLucid className="h-8 w-8" /> },
+  { name: 'الدهان', icon: <SprayCan className="h-8 w-8" /> },
 ];
 
 export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="w-full py-20 md:py-32 bg-background">
+      <section className="w-full py-20 md:py-32 lg:py-40 bg-background">
         <div className="container mx-auto px-4 md:px-6 flex flex-col items-center text-center">
-          <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 text-primary">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-headline mb-4 text-foreground">
             بلمسة، وظيفتك بين يديك
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
@@ -63,22 +63,43 @@ export default function Home() {
           <form className="w-full max-w-2xl flex items-center gap-0 relative">
             <Input
               type="text"
-              placeholder="ابحث عن حرفة أمثال نجارة..."
-              className="w-full pr-4 py-3 h-14 text-base rounded-full pl-6 border-2 focus-visible:ring-offset-0 focus-visible:ring-2"
+              placeholder="ابحث عن حرفة أمثال نجارة، سباكة، كهرباء..."
+              className="w-full pr-4 py-3 h-14 text-base rounded-full pl-16 border-2 focus-visible:ring-offset-0 focus-visible:ring-2"
             />
-            <Button type="submit" size="icon" className="absolute left-2 h-10 w-10 rounded-full">
-              <Search className="h-5 w-5" />
-              <span className="sr-only">بحث</span>
+            <Button type="submit" size="lg" className="absolute left-2 h-11 rounded-full px-6">
+              <Search className="h-5 w-5 ml-2" />
+              <span>بحث</span>
             </Button>
           </form>
         </div>
       </section>
 
-      {/* Featured Jobs Section */}
+      {/* Categories Section */}
       <section className="w-full py-16 md:py-24 bg-secondary/30">
         <div className="container mx-auto px-4 md:px-6 flex flex-col items-center">
           <h2 className="text-3xl font-bold text-center mb-12 font-headline">
-            فرص مميزة
+            تصفح حسب الحرفة
+          </h2>
+          <div className="w-full max-w-6xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+            {categories.map((category) => (
+              <Link href="/jobs" key={category.name}
+                className="group flex flex-col items-center justify-center text-center gap-3 p-4 bg-card rounded-lg border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+              >
+                <div className="h-16 w-16 flex items-center justify-center rounded-full bg-primary/10 text-primary transition-colors">
+                  {category.icon}
+                </div>
+                <h3 className="text-md font-semibold">{category.name}</h3>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Jobs Section */}
+      <section className="w-full py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4 md:px-6 flex flex-col items-center">
+          <h2 className="text-3xl font-bold text-center mb-12 font-headline">
+            فرص مميزة وحصرية
           </h2>
           <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6">
             {featuredJobs.map((job, index) => (
@@ -86,34 +107,13 @@ export default function Home() {
             ))}
           </div>
           <div className="text-center mt-12">
-            <Button variant="outline" asChild>
+            <Button variant="outline" size="lg" asChild>
               <Link href="/jobs">عرض كل الوظائف</Link>
             </Button>
           </div>
         </div>
       </section>
       
-      {/* Categories Section */}
-      <section className="w-full py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4 md:px-6 flex flex-col items-center">
-          <h2 className="text-3xl font-bold text-center mb-12 font-headline">
-            تصفح حسب الحرفة
-          </h2>
-          <div className="w-full max-w-5xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            {categories.map((category) => (
-              <div
-                key={category.name}
-                className="group flex flex-col items-center justify-center text-center gap-3 p-4 md:p-6 bg-card rounded-lg shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer aspect-square"
-              >
-                <div className="h-14 w-14 md:h-16 md:w-16 flex items-center justify-center rounded-full bg-secondary text-primary transition-colors">
-                  {category.icon}
-                </div>
-                <h3 className="text-sm md:text-md font-semibold">{category.name}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </>
   );
 }
