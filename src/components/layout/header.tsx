@@ -1,10 +1,11 @@
+
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { UserNav } from '@/components/auth/user-nav';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Briefcase, Search, User, Rss, Handshake } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const HandIcon = () => (
@@ -30,7 +31,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 md:h-20 max-w-screen-2xl items-center justify-between">
+      <div className="container flex h-16 md:h-20 items-center justify-between">
         <div className="flex items-center gap-4 md:gap-6">
           <Link href="/" className="flex items-center gap-2">
             <HandIcon />
