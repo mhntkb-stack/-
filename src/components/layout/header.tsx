@@ -31,26 +31,27 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 md:h-20 items-center justify-between">
-        <div className="flex items-center gap-4 md:gap-6">
+      <div className="container flex h-16 md:h-20 items-center">
+        <div className="flex-1 flex items-center gap-4 md:gap-6">
           <Link href="/" className="flex items-center gap-2">
             <HandIcon />
             <span className="font-bold text-lg hidden sm:inline-block">مهنتك</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="transition-colors hover:text-primary text-foreground/80"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
+        <nav className="hidden md:flex flex-1 justify-center items-center gap-6 text-sm font-medium">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="transition-colors hover:text-primary text-foreground/80"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex-1 hidden md:flex items-center justify-end gap-4">
           {isLoggedIn ? (
             <UserNav />
           ) : (
@@ -65,7 +66,7 @@ export default function Header() {
           )}
         </div>
 
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden flex items-center justify-end flex-1">
          {isLoggedIn && <div className="mr-2"><UserNav /></div>}
           <Sheet>
             <SheetTrigger asChild>
