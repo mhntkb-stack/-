@@ -1,22 +1,65 @@
+
+'use client';
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { Search, Frown } from 'lucide-react';
 import JobCard from '@/components/job-card';
 
-const jobs = [
-    { title: 'مهندس كهرباء', company: 'شركة الكهرباء الوطنية', location: 'صنعاء، حدة', type: 'دوام كامل', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo' },
-    { title: 'مطور واجهات أمامية (React)', company: 'تقنية المستقبل', location: 'صنعاء، الأصبحي', type: 'دوام كامل', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo tech' },
-    { title: 'سباك محترف', company: 'خدمات الصيانة الحديثة', location: 'صنعاء، السبعين', type: 'دوام جزئي', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo services' },
-    { title: 'مهندس معماري', company: 'البناء العصري', location: 'صنعاء، بيت بوس', type: 'عقد', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo construction' },
-    { title: 'مصمم جرافيك', company: 'إبداع للإعلان', location: 'صنعاء، حدة', type: 'دوام كامل', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo design' },
-    { title: 'مدير مشروع', company: 'مشاريع اليمن', location: 'صنعاء، الأصبحي', type: 'دوام كامل', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo corporate' },
+const allJobs = [
+    { title: 'مهندس كهرباء', company: 'شركة الكهرباء الوطنية', location: 'صنعاء، حدة', type: 'دوام كامل', experience: 'mid', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo' },
+    { title: 'مطور واجهات أمامية (React)', company: 'تقنية المستقبل', location: 'صنعاء، الأصبحي', type: 'دوام كامل', experience: 'senior', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo tech' },
+    { title: 'سباك محترف', company: 'خدمات الصيانة الحديثة', location: 'صنعاء، السبعين', type: 'دوام جزئي', experience: 'entry', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo services' },
+    { title: 'مهندس معماري', company: 'البناء العصري', location: 'صنعاء، بيت بوس', type: 'عقد', experience: 'senior', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo construction' },
+    { title: 'مصمم جرافيك', company: 'إبداع للإعلان', location: 'صنعاء، حدة', type: 'دوام كامل', experience: 'mid', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo design' },
+    { title: 'مدير مشروع', company: 'مشاريع اليمن', location: 'صنعاء، الأصبحي', type: 'دوام كامل', experience: 'senior', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo corporate' },
+    { title: 'نجار', company: 'ورشة النجارة', location: 'صنعاء، الستين', type: 'دوام كامل', experience: 'mid', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo carpentry' },
+    { title: 'خياط', company: 'المخيطة الفاخرة', location: 'صنعاء، التحرير', type: 'دوام جزئي', experience: 'entry', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo fashion' },
 ];
 
 export default function JobsPage() {
+    const [filteredJobs, setFilteredJobs] = useState(allJobs);
+    const [keywords, setKeywords] = useState('');
+    const [location, setLocation] = useState('');
+    const [jobTypes, setJobTypes] = useState<string[]>([]);
+    const [experience, setExperience] = useState('');
+
+    const handleFilter = () => {
+        let jobs = allJobs;
+
+        if (keywords) {
+            jobs = jobs.filter(job => job.title.includes(keywords) || job.company.includes(keywords));
+        }
+
+        if (location) {
+            jobs = jobs.filter(job => job.location.includes(location));
+        }
+
+        if (jobTypes.length > 0) {
+            jobs = jobs.filter(job => jobTypes.includes(job.type));
+        }
+
+        if (experience) {
+            jobs = jobs.filter(job => job.experience === experience);
+        }
+
+        setFilteredJobs(jobs);
+    };
+
+    const handleJobTypeChange = (checked: boolean | 'indeterminate', type: string) => {
+        if (checked) {
+            setJobTypes(prev => [...prev, type]);
+        } else {
+            setJobTypes(prev => prev.filter(t => t !== type));
+        }
+    };
+
+
     return (
         <div className="container py-8 md:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
@@ -28,30 +71,30 @@ export default function JobsPage() {
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
                                     <Label htmlFor="keywords">كلمات مفتاحية</Label>
-                                    <Input id="keywords" placeholder="مهندس، مطور..." />
+                                    <Input id="keywords" placeholder="مهندس، مطور..." value={keywords} onChange={e => setKeywords(e.target.value)} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="location">الموقع</Label>
-                                    <Input id="location" placeholder="صنعاء، حدة..." />
+                                    <Input id="location" placeholder="صنعاء، حدة..." value={location} onChange={e => setLocation(e.target.value)} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label>نوع الوظيفة</Label>
                                     <div className="flex items-center space-x-2 space-x-reverse">
-                                        <Checkbox id="full-time" />
+                                        <Checkbox id="full-time" onCheckedChange={(checked) => handleJobTypeChange(checked, 'دوام كامل')} />
                                         <Label htmlFor="full-time" className="font-normal">دوام كامل</Label>
                                     </div>
                                     <div className="flex items-center space-x-2 space-x-reverse">
-                                        <Checkbox id="part-time" />
+                                        <Checkbox id="part-time" onCheckedChange={(checked) => handleJobTypeChange(checked, 'دوام جزئي')} />
                                         <Label htmlFor="part-time" className="font-normal">دوام جزئي</Label>
                                     </div>
                                     <div className="flex items-center space-x-2 space-x-reverse">
-                                        <Checkbox id="contract" />
+                                        <Checkbox id="contract" onCheckedChange={(checked) => handleJobTypeChange(checked, 'عقد')} />
                                         <Label htmlFor="contract" className="font-normal">عقد</Label>
                                     </div>
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="experience">مستوى الخبرة</Label>
-                                    <Select>
+                                    <Select onValueChange={value => setExperience(value)}>
                                         <SelectTrigger id="experience">
                                             <SelectValue placeholder="اختر المستوى" />
                                         </SelectTrigger>
@@ -62,20 +105,7 @@ export default function JobsPage() {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="salary">الراتب</Label>
-                                    <Select>
-                                        <SelectTrigger id="salary">
-                                            <SelectValue placeholder="اختر الراتب" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="range1">50,000 - 100,000</SelectItem>
-                                            <SelectItem value="range2">100,000 - 200,000</SelectItem>
-                                            <SelectItem value="range3">200,000+</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <Button className="w-full bg-accent hover:bg-accent/90">
+                                <Button className="w-full bg-accent hover:bg-accent/90" onClick={handleFilter}>
                                     <Search className="h-4 w-4 ml-2" />
                                     تطبيق الفلاتر
                                 </Button>
@@ -87,11 +117,22 @@ export default function JobsPage() {
                 {/* Job Listings */}
                 <main className="col-span-1 lg:col-span-3">
                     <h1 className="text-3xl font-bold mb-6 font-headline">الوظائف المتاحة</h1>
-                    <div className="grid grid-cols-1 gap-6">
-                        {jobs.map((job, index) => (
-                            <JobCard key={index} {...job} />
-                        ))}
-                    </div>
+                    {filteredJobs.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-6">
+                            {filteredJobs.map((job, index) => (
+                                <JobCard key={index} {...job} />
+                            ))}
+                        </div>
+                    ) : (
+                         <Card className="flex flex-col items-center justify-center text-center p-12 gap-4 border-dashed">
+                           <Frown className="w-16 h-16 text-muted-foreground/50" />
+                           <h3 className="text-xl font-semibold">لا توجد نتائج مطابقة</h3>
+                           <p className="text-muted-foreground max-w-xs">
+                             حاول تعديل معايير البحث أو توسيع نطاقه للعثور على ما تبحث عنه.
+                           </p>
+                           <Button variant="outline" onClick={() => setFilteredJobs(allJobs)}>إعادة تعيين الفلاتر</Button>
+                         </Card>
+                    )}
                      <div className="mt-8 flex justify-center">
                         <Button variant="outline">تحميل المزيد</Button>
                     </div>
