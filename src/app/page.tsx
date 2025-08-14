@@ -85,7 +85,7 @@ export default function Home() {
     <>
       {/* Hero Section */}
       <section className="py-20 md:py-32 text-center bg-background">
-        <div className="container">
+        <div className="container px-4 md:px-6">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 text-primary">
             بلمسة، وظيفتك بين يديك
           </h1>
@@ -108,11 +108,11 @@ export default function Home() {
 
       {/* Featured Jobs Section */}
       <section className="py-16 md:py-24 bg-secondary/30">
-        <div className="container">
+        <div className="container px-4 md:px-6">
           <h2 className="text-3xl font-bold text-center mb-12 font-headline">
             فرص مميزة
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {featuredJobs.map((job, index) => (
               <JobCard key={index} {...job} />
             ))}
@@ -127,20 +127,20 @@ export default function Home() {
       
       {/* Categories Section */}
       <section className="py-16 md:py-24 bg-background">
-        <div className="container">
+        <div className="container px-4 md:px-6">
           <h2 className="text-3xl font-bold text-center mb-12 font-headline">
             تصفح حسب الحرفة
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
             {categories.map((category) => (
               <div
                 key={category.name}
-                className="group flex flex-col items-center justify-center text-center gap-3 p-6 bg-card rounded-lg shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer aspect-square"
+                className="group flex flex-col items-center justify-center text-center gap-3 p-4 md:p-6 bg-card rounded-lg shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer aspect-square"
               >
-                <div className="h-16 w-16 flex items-center justify-center rounded-full bg-secondary text-primary transition-colors">
+                <div className="h-14 w-14 md:h-16 md:w-16 flex items-center justify-center rounded-full bg-secondary text-primary transition-colors">
                   {category.icon}
                 </div>
-                <h3 className="text-md font-semibold">{category.name}</h3>
+                <h3 className="text-sm md:text-md font-semibold">{category.name}</h3>
               </div>
             ))}
           </div>

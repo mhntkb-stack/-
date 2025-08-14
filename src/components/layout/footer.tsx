@@ -8,9 +8,9 @@ const HandIcon = () => (
 export default function Footer() {
   return (
     <footer className="border-t bg-card">
-      <div className="container max-w-screen-2xl py-8">
+      <div className="container max-w-screen-2xl py-6 md:py-8 px-4 md:px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col items-center md:items-start gap-2">
+          <div className="flex flex-col items-center md:items-start gap-2 text-center md:text-right">
             <Link href="/" className="flex items-center gap-2 mb-2">
               <HandIcon />
               <span className="font-bold text-lg">مهنتك</span>

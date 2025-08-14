@@ -18,10 +18,10 @@ const jobs = [
 
 export default function JobsPage() {
     return (
-        <div className="container py-12">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
+        <div className="container py-8 md:py-12">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
                 {/* Filters Sidebar */}
-                <aside className="col-span-1 md:sticky top-20">
+                <aside className="col-span-1 lg:sticky top-24">
                     <Card>
                         <CardContent className="p-6">
                             <h3 className="text-lg font-semibold mb-4 font-headline">تصفية النتائج</h3>
@@ -38,15 +38,15 @@ export default function JobsPage() {
                                     <Label>نوع الوظيفة</Label>
                                     <div className="flex items-center space-x-2 space-x-reverse">
                                         <Checkbox id="full-time" />
-                                        <Label htmlFor="full-time">دوام كامل</Label>
+                                        <Label htmlFor="full-time" className="font-normal">دوام كامل</Label>
                                     </div>
                                     <div className="flex items-center space-x-2 space-x-reverse">
                                         <Checkbox id="part-time" />
-                                        <Label htmlFor="part-time">دوام جزئي</Label>
+                                        <Label htmlFor="part-time" className="font-normal">دوام جزئي</Label>
                                     </div>
                                     <div className="flex items-center space-x-2 space-x-reverse">
                                         <Checkbox id="contract" />
-                                        <Label htmlFor="contract">عقد</Label>
+                                        <Label htmlFor="contract" className="font-normal">عقد</Label>
                                     </div>
                                 </div>
                                 <div className="grid gap-2">
@@ -85,7 +85,7 @@ export default function JobsPage() {
                 </aside>
 
                 {/* Job Listings */}
-                <main className="col-span-1 md:col-span-3">
+                <main className="col-span-1 lg:col-span-3">
                     <h1 className="text-3xl font-bold mb-6 font-headline">الوظائف المتاحة</h1>
                     <div className="grid grid-cols-1 gap-6">
                         {jobs.map((job, index) => (

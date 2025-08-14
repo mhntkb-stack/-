@@ -16,10 +16,10 @@ const applications = [
 
 export default function AccountPage() {
   return (
-    <div className="container py-12">
+    <div className="container py-8 md:py-12">
       <h1 className="text-3xl font-bold mb-8 font-headline">حسابي</h1>
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:w-fit">
+        <TabsList className="grid w-full max-w-md grid-cols-3">
           <TabsTrigger value="profile">الملف الشخصي</TabsTrigger>
           <TabsTrigger value="applications">طلباتي</TabsTrigger>
           <TabsTrigger value="recommendations">توصيات ذكية</TabsTrigger>
@@ -65,28 +65,30 @@ export default function AccountPage() {
               <CardDescription>تتبع حالة طلبات التوظيف التي قدمتها.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>الوظيفة</TableHead>
-                    <TableHead>الشركة</TableHead>
-                    <TableHead>تاريخ التقديم</TableHead>
-                    <TableHead>الحالة</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {applications.map((app, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{app.jobTitle}</TableCell>
-                      <TableCell>{app.company}</TableCell>
-                      <TableCell>{app.date}</TableCell>
-                      <TableCell>
-                        <Badge variant={app.status === 'مرفوض' ? 'destructive' : app.status === 'تم العرض' ? 'default': 'secondary'}>{app.status}</Badge>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>الوظيفة</TableHead>
+                      <TableHead>الشركة</TableHead>
+                      <TableHead>تاريخ التقديم</TableHead>
+                      <TableHead>الحالة</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {applications.map((app, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium whitespace-nowrap">{app.jobTitle}</TableCell>
+                        <TableCell className="whitespace-nowrap">{app.company}</TableCell>
+                        <TableCell className="whitespace-nowrap">{app.date}</TableCell>
+                        <TableCell>
+                          <Badge variant={app.status === 'مرفوض' ? 'destructive' : app.status === 'تم العرض' ? 'default': 'secondary'}>{app.status}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
