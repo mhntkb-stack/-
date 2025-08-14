@@ -49,7 +49,7 @@ User Profile: {{{userProfile}}}
 Job Market Trends: {{{jobMarketTrends}}}
 Past Engagement: {{{pastEngagement}}}
 
-Provide a list of recommended jobs:`, // Removed the Handlebars if statement
+Provide a list of recommended jobs:`,
 });
 
 const getJobRecommendationsFlow = ai.defineFlow(
