@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import JobCard from '@/components/job-card';
+import Link from 'next/link';
 
 const ScissorsIcon = () => (
   <svg
@@ -84,15 +85,15 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="py-20 md:py-32 text-center bg-background">
-        <div className="container px-4 md:px-6">
+      <section className="w-full py-20 md:py-32 bg-background">
+        <div className="container mx-auto px-4 md:px-6 flex flex-col items-center text-center">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 text-primary">
             بلمسة، وظيفتك بين يديك
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             منصتك المتخصصة لإيجاد فرص عمل للحرفيين في صنعاء. ابدأ مسيرتك الحرفية اليوم.
           </p>
-          <form className="max-w-2xl mx-auto flex items-center gap-0 relative">
+          <form className="w-full max-w-2xl flex items-center gap-0 relative">
             <Input
               type="text"
               placeholder="ابحث عن حرفة أمثال نجارة..."
@@ -107,31 +108,31 @@ export default function Home() {
       </section>
 
       {/* Featured Jobs Section */}
-      <section className="py-16 md:py-24 bg-secondary/30">
-        <div className="container px-4 md:px-6">
+      <section className="w-full py-16 md:py-24 bg-secondary/30">
+        <div className="container mx-auto px-4 md:px-6 flex flex-col items-center">
           <h2 className="text-3xl font-bold text-center mb-12 font-headline">
             فرص مميزة
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6">
             {featuredJobs.map((job, index) => (
               <JobCard key={index} {...job} />
             ))}
           </div>
           <div className="text-center mt-12">
             <Button variant="outline" asChild>
-              <a href="/jobs">عرض كل الوظائف</a>
+              <Link href="/jobs">عرض كل الوظائف</Link>
             </Button>
           </div>
         </div>
       </section>
       
       {/* Categories Section */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container px-4 md:px-6">
+      <section className="w-full py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4 md:px-6 flex flex-col items-center">
           <h2 className="text-3xl font-bold text-center mb-12 font-headline">
             تصفح حسب الحرفة
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+          <div className="w-full max-w-5xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
             {categories.map((category) => (
               <div
                 key={category.name}
