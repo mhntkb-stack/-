@@ -10,17 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Frown } from 'lucide-react';
 import JobCard from '@/components/job-card';
+import { allJobs } from '@/lib/jobs-data';
 
-const allJobs = [
-    { title: 'مهندس كهرباء', company: 'شركة الكهرباء الوطنية', location: 'صنعاء، حدة', type: 'دوام كامل', experience: 'mid', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo' },
-    { title: 'مطور واجهات أمامية (React)', company: 'تقنية المستقبل', location: 'صنعاء، الأصبحي', type: 'دوام كامل', experience: 'senior', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo tech' },
-    { title: 'سباك محترف', company: 'خدمات الصيانة الحديثة', location: 'صنعاء، السبعين', type: 'دوام جزئي', experience: 'entry', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo services' },
-    { title: 'مهندس معماري', company: 'البناء العصري', location: 'صنعاء، بيت بوس', type: 'عقد', experience: 'senior', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo construction' },
-    { title: 'مصمم جرافيك', company: 'إبداع للإعلان', location: 'صنعاء، حدة', type: 'دوام كامل', experience: 'mid', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo design' },
-    { title: 'مدير مشروع', company: 'مشاريع اليمن', location: 'صنعاء، الأصبحي', type: 'دوام كامل', experience: 'senior', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo corporate' },
-    { title: 'نجار', company: 'ورشة النجارة', location: 'صنعاء، الستين', type: 'دوام كامل', experience: 'mid', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo carpentry' },
-    { title: 'خياط', company: 'المخيطة الفاخرة', location: 'صنعاء، التحرير', type: 'دوام جزئي', experience: 'entry', logo: 'https://placehold.co/100x100.png', dataAiHint: 'company logo fashion' },
-];
 
 export default function JobsPage() {
     const [filteredJobs, setFilteredJobs] = useState(allJobs);
@@ -105,7 +96,7 @@ export default function JobsPage() {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <Button className="w-full bg-accent hover:bg-accent/90" onClick={handleFilter}>
+                                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleFilter}>
                                     <Search className="h-4 w-4 ml-2" />
                                     تطبيق الفلاتر
                                 </Button>
@@ -119,8 +110,8 @@ export default function JobsPage() {
                     <h1 className="text-3xl font-bold mb-6 font-headline">الوظائف المتاحة</h1>
                     {filteredJobs.length > 0 ? (
                         <div className="grid grid-cols-1 gap-6">
-                            {filteredJobs.map((job, index) => (
-                                <JobCard key={index} {...job} />
+                            {filteredJobs.map((job) => (
+                                <JobCard key={job.id} {...job} />
                             ))}
                         </div>
                     ) : (
@@ -130,7 +121,13 @@ export default function JobsPage() {
                            <p className="text-muted-foreground max-w-xs">
                              حاول تعديل معايير البحث أو توسيع نطاقه للعثور على ما تبحث عنه.
                            </p>
-                           <Button variant="outline" onClick={() => setFilteredJobs(allJobs)}>إعادة تعيين الفلاتر</Button>
+                           <Button variant="outline" onClick={() => {
+                               setFilteredJobs(allJobs);
+                               setKeywords('');
+                               setLocation('');
+                               setJobTypes([]);
+                               setExperience('');
+                           }}>إعادة تعيين الفلاتر</Button>
                          </Card>
                     )}
                      <div className="mt-8 flex justify-center">

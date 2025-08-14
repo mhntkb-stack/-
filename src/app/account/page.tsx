@@ -15,18 +15,22 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getDatabase, ref, onValue, set, push, serverTimestamp } from "firebase/database";
 import { useToast } from "@/hooks/use-toast";
+import { format } from 'date-fns';
 
 
-const applications = [
-  { jobTitle: "مهندس كهرباء", company: "شركة الكهرباء الوطنية", date: "2023-10-26", status: "تحت المراجعة" },
-  { jobTitle: "مطور واجهات أمامية", company: "تقنية المستقبل", date: "2023-10-24", status: "تم العرض" },
-  { jobTitle: "سباك محترف", company: "خدمات الصيانة", date: "2023-10-20", status: "مرفوض" },
-]
+interface Application {
+  id: string;
+  jobTitle: string;
+  company: string;
+  appliedAt: string;
+  status: string;
+}
+
 
 interface PostedJob {
   id: string;
   title: string;
-  applicants: number;
+  applicants: number; // This might need to be calculated separately
   status: 'مفتوح' | 'مغلق';
   description?: string;
   location?: string;
@@ -38,6 +42,7 @@ export default function AccountPage() {
   const [userBio, setUserBio] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [postedJobs, setPostedJobs] = useState<PostedJob[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [newJobTitle, setNewJobTitle] = useState('');
   const [newJobDescription, setNewJobDescription] = useState('');
   const [newJobLocation, setNewJobLocation] = useState('');
@@ -51,6 +56,7 @@ export default function AccountPage() {
       setUser(currentUser);
       if (currentUser) {
         setDisplayName(currentUser.displayName || '');
+        
         // Fetch user bio
         const userBioRef = ref(db, `users/${currentUser.uid}/bio`);
         onValue(userBioRef, (snapshot) => {
@@ -59,6 +65,7 @@ export default function AccountPage() {
             setUserBio(bio);
           }
         });
+
         // Fetch posted jobs
         const jobsRef = ref(db, `jobs/${currentUser.uid}`);
         onValue(jobsRef, (snapshot) => {
@@ -71,6 +78,24 @@ export default function AccountPage() {
             })) : [];
             setPostedJobs(jobsList);
         });
+
+        // Fetch applications
+        const applicationsRef = ref(db, `applications/${currentUser.uid}`);
+        onValue(applicationsRef, (snapshot) => {
+          const appsData = snapshot.val();
+          const appsList: Application[] = appsData ? Object.keys(appsData).map(key => {
+            const appData = appsData[key];
+            return {
+              id: key,
+              jobTitle: appData.jobTitle,
+              company: appData.company,
+              appliedAt: appData.appliedAt ? format(new Date(appData.appliedAt), 'yyyy-MM-dd') : 'N/A',
+              status: appData.status,
+            };
+          }) : [];
+          setApplications(appsList);
+        });
+
       }
       setLoading(false);
     });
@@ -135,7 +160,10 @@ export default function AccountPage() {
   
   return (
     <div className="container py-8 md:py-12">
-      <h1 className="text-3xl font-bold mb-8 font-headline">حسابي</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold font-headline">حسابي</h1>
+        <span className="text-sm text-muted-foreground">أهلاً بك، {displayName || 'مستخدم'}!</span>
+      </div>
       <Tabs defaultValue="profile" className="w-full">
         <TabsList className="grid w-full max-w-lg grid-cols-4">
           <TabsTrigger value="profile">الملف الشخصي</TabsTrigger>
@@ -171,10 +199,10 @@ export default function AccountPage() {
                 <Label htmlFor="bio">نبذة عني</Label>
                 <Textarea id="bio" placeholder="تحدث عن مهاراتك وخبراتك..." value={userBio} onChange={(e) => setUserBio(e.target.value)} />
               </div>
-              <div className="flex justify-end">
-                <Button onClick={handleProfileSave}>حفظ التغييرات</Button>
-              </div>
             </CardContent>
+            <CardFooter className="justify-end">
+                <Button onClick={handleProfileSave}>حفظ التغييرات</Button>
+            </CardFooter>
           </Card>
         </TabsContent>
         <TabsContent value="applications" className="mt-6">
@@ -184,30 +212,39 @@ export default function AccountPage() {
               <CardDescription>تتبع حالة طلبات التوظيف التي قدمتها.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>الوظيفة</TableHead>
-                      <TableHead>الشركة</TableHead>
-                      <TableHead>تاريخ التقديم</TableHead>
-                      <TableHead>الحالة</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {applications.map((app, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium whitespace-nowrap">{app.jobTitle}</TableCell>
-                        <TableCell className="whitespace-nowrap">{app.company}</TableCell>
-                        <TableCell className="whitespace-nowrap">{app.date}</TableCell>
-                        <TableCell>
-                          <Badge variant={app.status === 'مرفوض' ? 'destructive' : app.status === 'تم العرض' ? 'default': 'secondary'}>{app.status}</Badge>
-                        </TableCell>
+               {applications.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>الوظيفة</TableHead>
+                        <TableHead>الشركة</TableHead>
+                        <TableHead>تاريخ التقديم</TableHead>
+                        <TableHead>الحالة</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {applications.map((app) => (
+                        <TableRow key={app.id}>
+                          <TableCell className="font-medium whitespace-nowrap">{app.jobTitle}</TableCell>
+                          <TableCell className="whitespace-nowrap">{app.company}</TableCell>
+                          <TableCell className="whitespace-nowrap">{app.appliedAt}</TableCell>
+                          <TableCell>
+                            <Badge variant={app.status === 'مرفوض' ? 'destructive' : app.status === 'تم العرض' ? 'default': 'secondary'}>{app.status}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="text-center py-12 text-muted-foreground">
+                    <p>لم تقدم على أي وظيفة بعد.</p>
+                    <Button variant="link" asChild className="mt-2">
+                        <Link href="/jobs">تصفح الوظائف الآن</Link>
+                    </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -278,5 +315,3 @@ export default function AccountPage() {
     </div>
   )
 }
-
-    

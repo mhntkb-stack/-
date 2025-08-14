@@ -1,10 +1,18 @@
+
+'use client';
+
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { MapPin, Briefcase, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
+import { getAuth } from 'firebase/auth';
+import { app } from '@/lib/firebase';
+import { getDatabase, ref, set, serverTimestamp, push } from 'firebase/database';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 type JobCardProps = {
+  id: string;
   title: string;
   company: string;
   location: string;
@@ -13,8 +21,48 @@ type JobCardProps = {
   dataAiHint?: string;
 };
 
-export default function JobCard({ title, company, location, type, logo, dataAiHint }: JobCardProps) {
+export default function JobCard({ id, title, company, location, type, logo, dataAiHint }: JobCardProps) {
   const isSalary = type.includes('ريال يمني');
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const handleApply = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      toast({
+        variant: 'destructive',
+        title: 'يجب عليك تسجيل الدخول أولاً',
+        description: 'يرجى تسجيل الدخول أو إنشاء حساب للتقديم على الوظائف.',
+      });
+      router.push('/login');
+      return;
+    }
+
+    try {
+      const applicationsRef = ref(db, `applications/${user.uid}`);
+      const newApplicationRef = push(applicationsRef);
+      await set(newApplicationRef, {
+        jobId: id,
+        jobTitle: title,
+        company: company,
+        status: 'تحت المراجعة',
+        appliedAt: serverTimestamp(),
+      });
+      toast({
+        title: 'تم التقديم بنجاح!',
+        description: `لقد قدمت على وظيفة "${title}".`,
+      });
+    } catch (error) {
+      console.error("Error applying for job:", error);
+      toast({
+        variant: 'destructive',
+        title: 'حدث خطأ',
+        description: 'فشل التقديم على الوظيفة. يرجى المحاولة مرة أخرى.',
+      });
+    }
+  };
 
   return (
     <Card className="hover:shadow-md transition-shadow duration-300 flex flex-col bg-card">
@@ -45,7 +93,7 @@ export default function JobCard({ title, company, location, type, logo, dataAiHi
         </div>
       </CardContent>
       <div className="p-6 pt-0 flex items-center justify-end">
-          <Button>التقديم الآن</Button>
+          <Button onClick={handleApply}>التقديم الآن</Button>
       </div>
     </Card>
   );
