@@ -13,24 +13,62 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { User, Settings, LifeBuoy, LogOut } from 'lucide-react';
+import { getAuth, signOut } from 'firebase/auth';
+import { app } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { useEffect, useState } from 'react';
 
 export function UserNav() {
+  const auth = getAuth(app);
+  const router = useRouter();
+  const { toast } = useToast();
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userInitial, setUserInitial] = useState('');
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        setUserName(user.displayName || 'مستخدم');
+        setUserEmail(user.email || '');
+        setUserInitial(user.displayName ? user.displayName.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : 'U'));
+      }
+    });
+    return () => unsubscribe();
+  }, [auth]);
+  
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({
+        title: "تم تسجيل الخروج بنجاح",
+      });
+      router.push('/');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "حدث خطأ أثناء تسجيل الخروج",
+      });
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9">
             <AvatarImage src="https://placehold.co/100x100.png" alt="@user" data-ai-hint="user avatar" />
-            <AvatarFallback>أ</AvatarFallback>
+            <AvatarFallback>{userInitial}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">أحمد الصالح</p>
+            <p className="text-sm font-medium leading-none">{userName}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              ahmad@example.com
+              {userEmail}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -52,7 +90,7 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="ml-2 h-4 w-4" />
           <span>تسجيل الخروج</span>
         </DropdownMenuItem>

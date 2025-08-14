@@ -14,10 +14,10 @@ export default function Footer() {
           <div className="flex flex-col items-center md:items-start gap-2 text-center md:text-right">
             <Link href="/" className="flex items-center gap-2 mb-2">
               <HandIcon />
-              <span className="font-bold text-lg">مهنتك</span>
+              <span className="font-bold text-lg">لمسة مهنتك</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} مهنتك. جميع الحقوق محفوظة.
+              © {new Date().getFullYear()} لمسة مهنتك. جميع الحقوق محفوظة.
             </p>
           </div>
           <div className="flex items-center gap-4">

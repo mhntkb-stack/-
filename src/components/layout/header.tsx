@@ -9,6 +9,8 @@ import { Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app } from '@/lib/firebase';
 
 
 const HandIcon = () => (
@@ -19,19 +21,19 @@ const navLinks = [
   { href: '/', label: 'الرئيسية' },
   { href: '/jobs', label: 'ابحث عن فرصة' },
   { href: '/employers', label: 'لأصحاب العمل' },
-  { href: '/cv-builder', label: 'محسن السيرة الذاتية' },
 ];
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
-  
+  const auth = getAuth(app);
+
   useEffect(() => {
-    // This is a placeholder for actual authentication logic.
-    // In a real app, you'd check a token, session, etc.
-    const loggedIn = typeof window !== 'undefined' && Math.random() > 0.5;
-    setIsLoggedIn(loggedIn);
-  }, [])
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, [auth]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -60,7 +62,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center justify-end gap-4">
+        <div className="flex items-center justify-end gap-2">
           {isLoggedIn ? (
             <UserNav />
           ) : (
@@ -75,7 +77,7 @@ export default function Header() {
           )}
         </div>
 
-        <div className="md:hidden flex items-center justify-end flex-1">
+        <div className="md:hidden flex items-center justify-end flex-1 ml-auto">
          {isLoggedIn && <div className="mr-2"><UserNav /></div>}
           <Sheet>
             <SheetTrigger asChild>

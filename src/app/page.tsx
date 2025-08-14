@@ -1,41 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Building, Wrench as WrenchIconLucid, HandMetal, Palette, Utensils } from 'lucide-react';
 import JobCard from '@/components/job-card';
 import Link from 'next/link';
-
-const ScissorsIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-8 w-8"
-  >
-    <circle cx="6" cy="6" r="3" />
-    <circle cx="6" cy="18" r="3" />
-    <line x1="20" x2="8.12" y1="4" y2="15.88" />
-    <line x1="14.47" x2="20" y1="14.48" y2="20" />
-    <line x1="8.12" x2="12" y1="8.12" y2="12" />
-  </svg>
-);
-
-const WrenchIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-)
-
-const HammerIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8"><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"/></svg>
-)
-
-const PaintBucketIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11z"/><path d="m5 2 4 4"/><path d="M14 4 7.5 10.5"/><path d="M22 12A10 10 0 1 1 12 2"/></svg>
-)
 
 const featuredJobs = [
   {
@@ -47,24 +14,24 @@ const featuredJobs = [
     dataAiHint: 'company logo carpentry'
   },
   {
-    title: 'مطور واجهات أمامية (React)',
-    company: 'تقنية المستقبل',
+    title: 'فني تبريد وتكييف',
+    company: 'خبراء الصيانة',
     location: 'صنعاء، الأصبحي',
     type: 'دوام كامل',
     logo: 'https://placehold.co/100x100.png',
     dataAiHint: 'company logo tech'
   },
   {
-    title: 'سباك محترف',
-    company: 'خدمات الصيانة الحديثة',
+    title: 'خياط ماهر',
+    company: 'معمل الخياطة العصري',
     location: 'صنعاء، السبعين',
     type: 'دوام جزئي',
     logo: 'https://placehold.co/100x100.png',
     dataAiHint: 'company logo services'
   },
   {
-    title: 'مهندس معماري',
-    company: 'البناء العصري',
+    title: 'دهان وديكور',
+    company: 'لمسة فنية للديكور',
     location: 'صنعاء، بيت بوس',
     type: 'عقد',
     logo: 'https://placehold.co/100x100.png',
@@ -73,12 +40,12 @@ const featuredJobs = [
 ];
 
 const categories = [
-  { name: 'السباكة', icon: <WrenchIcon /> },
-  { name: 'الدهان', icon: <PaintBucketIcon /> },
-  { name: 'النجارة', icon: <HammerIcon /> },
-  { name: 'الحلاقة', icon: <ScissorsIcon /> },
-  { name: 'الكهرباء', icon: <WrenchIcon /> },
-  { name: 'الخياطة', icon: <ScissorsIcon /> },
+  { name: 'البناء والإنشاءات', icon: <Building className="h-8 w-8" /> },
+  { name: 'الصيانة', icon: <WrenchIconLucid className="h-8 w-8" /> },
+  { name: 'الحرف اليدوية', icon: <HandMetal className="h-8 w-8" /> },
+  { name: 'الأعمال الفنية', icon: <Palette className="h-8 w-8" /> },
+  { name: 'المجال الغذائي', icon: <Utensils className="h-8 w-8" /> },
+  { name: 'السباكة', icon: <WrenchIconLucid className="h-8 w-8" /> },
 ];
 
 export default function Home() {
