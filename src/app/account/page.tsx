@@ -11,11 +11,20 @@ import { Badge } from "@/components/ui/badge"
 import SmartRecommendations from "@/components/smart-recommendations"
 import { getAuth, onAuthStateChanged, User, updateProfile } from "firebase/auth";
 import { app } from '@/lib/firebase';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getDatabase, ref, onValue, set, push, serverTimestamp } from "firebase/database";
+import { getDatabase, ref, onValue, set, push, serverTimestamp, get } from "firebase/database";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 
 interface Application {
@@ -26,14 +35,20 @@ interface Application {
   status: string;
 }
 
+interface Applicant {
+    id: string;
+    name?: string;
+    email?: string;
+    appliedAt: string;
+}
 
 interface PostedJob {
   id: string;
   title: string;
-  applicants: number; // This might need to be calculated separately
   status: 'مفتوح' | 'مغلق';
   description?: string;
   location?: string;
+  applicants?: Applicant[];
 }
 
 export default function AccountPage() {
@@ -46,69 +61,107 @@ export default function AccountPage() {
   const [newJobTitle, setNewJobTitle] = useState('');
   const [newJobDescription, setNewJobDescription] = useState('');
   const [newJobLocation, setNewJobLocation] = useState('');
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
 
   const auth = getAuth(app);
   const db = getDatabase(app);
+  const storage = getStorage(app);
   const { toast } = useToast();
 
+  const fetchApplicantsForJob = async (jobId: string): Promise<Applicant[]> => {
+      const applicationsRef = ref(db, 'applications');
+      const snapshot = await get(applicationsRef);
+      if (!snapshot.exists()) return [];
+      
+      const allApplications = snapshot.val();
+      const jobApplicants: Applicant[] = [];
+
+      for (const userId in allApplications) {
+          const userApplications = allApplications[userId];
+          for (const appId in userApplications) {
+              if (userApplications[appId].jobId === jobId) {
+                  const userRef = ref(db, `users/${userId}`);
+                  const userSnapshot = await get(userRef);
+                  const userData = userSnapshot.val();
+                  
+                  jobApplicants.push({
+                      id: userId,
+                      name: userData?.displayName || 'غير متوفر',
+                      email: userData?.email || 'غير متوفر',
+                      appliedAt: userApplications[appId].appliedAt ? format(new Date(userApplications[appId].appliedAt), 'yyyy-MM-dd') : 'N/A'
+                  });
+              }
+          }
+      }
+      return jobApplicants;
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         setDisplayName(currentUser.displayName || '');
         
-        // Fetch user bio
         const userBioRef = ref(db, `users/${currentUser.uid}/bio`);
-        onValue(userBioRef, (snapshot) => {
-          const bio = snapshot.val();
-          if (bio) {
-            setUserBio(bio);
-          }
-        });
+        onValue(userBioRef, (snapshot) => setUserBio(snapshot.val() || ''));
 
-        // Fetch posted jobs
+        const resumeRef = storageRef(storage, `resumes/${currentUser.uid}/resume.pdf`);
+        getDownloadURL(resumeRef).then(setResumeUrl).catch(() => setResumeUrl(null));
+
         const jobsRef = ref(db, `jobs/${currentUser.uid}`);
-        onValue(jobsRef, (snapshot) => {
+        onValue(jobsRef, async (snapshot) => {
             const jobsData = snapshot.val();
-            const jobsList: PostedJob[] = jobsData ? Object.keys(jobsData).map(key => ({
-                id: key,
-                applicants: 0, // Placeholder
-                status: 'مفتوح', // Placeholder
-                ...jobsData[key]
-            })) : [];
-            setPostedJobs(jobsList);
+            if (jobsData) {
+                 const jobsListPromises: Promise<PostedJob>[] = Object.keys(jobsData).map(async key => {
+                    const applicants = await fetchApplicantsForJob(key);
+                    return {
+                        id: key,
+                        status: 'مفتوح',
+                        ...jobsData[key],
+                        applicants: applicants
+                    }
+                });
+                const jobsList = await Promise.all(jobsListPromises);
+                setPostedJobs(jobsList);
+            } else {
+                setPostedJobs([]);
+            }
         });
 
-        // Fetch applications
         const applicationsRef = ref(db, `applications/${currentUser.uid}`);
         onValue(applicationsRef, (snapshot) => {
           const appsData = snapshot.val();
-          const appsList: Application[] = appsData ? Object.keys(appsData).map(key => {
-            const appData = appsData[key];
-            return {
-              id: key,
-              jobTitle: appData.jobTitle,
-              company: appData.company,
-              appliedAt: appData.appliedAt ? format(new Date(appData.appliedAt), 'yyyy-MM-dd') : 'N/A',
-              status: appData.status,
-            };
-          }) : [];
+          const appsList: Application[] = appsData ? Object.keys(appsData).map(key => ({
+            id: key,
+            ...appsData[key],
+            appliedAt: appsData[key].appliedAt ? format(new Date(appsData[key].appliedAt), 'yyyy-MM-dd') : 'N/A',
+          })) : [];
           setApplications(appsList);
         });
-
       }
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [auth, db]);
+  }, [auth, db, storage]);
   
   const handleProfileSave = async () => {
     if (!user) return;
     try {
-      // Update display name in Auth
       await updateProfile(user, { displayName: displayName });
-      // Update bio in Realtime Database
-      await set(ref(db, `users/${user.uid}/bio`), userBio);
+      await set(ref(db, `users/${user.uid}`), {
+          bio: userBio,
+          displayName: displayName,
+          email: user.email,
+      });
+
+      if (resumeFile) {
+        const resumeRef = storageRef(storage, `resumes/${user.uid}/resume.pdf`);
+        await uploadBytes(resumeRef, resumeFile);
+        const url = await getDownloadURL(resumeRef);
+        setResumeUrl(url);
+        setResumeFile(null);
+      }
       toast({ title: "نجاح", description: "تم حفظ تغييرات الملف الشخصي." });
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -130,6 +183,7 @@ export default function AccountPage() {
             location: newJobLocation,
             createdAt: serverTimestamp(),
             status: 'مفتوح',
+            ownerId: user.uid,
         });
         toast({ title: "نجاح", description: "تم نشر الوظيفة بنجاح!" });
         setNewJobTitle('');
@@ -140,7 +194,6 @@ export default function AccountPage() {
         toast({ variant: 'destructive', title: "خطأ", description: "فشل نشر الوظيفة." });
     }
   };
-
 
   if (loading) {
     return <div className="container py-12 text-center">جارٍ تحميل بيانات الحساب...</div>;
@@ -190,10 +243,14 @@ export default function AccountPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="resume">السيرة الذاتية (ملف PDF)</Label>
-                <Input id="resume" type="file" />
-                <p className="text-sm text-muted-foreground">
-                  السيرة الحالية: <a href="#" className="underline text-primary">my_resume.pdf</a>
-                </p>
+                <Input id="resume" type="file" accept="application/pdf" onChange={(e) => setResumeFile(e.target.files ? e.target.files[0] : null)} />
+                {resumeUrl ? (
+                    <p className="text-sm text-muted-foreground">
+                    السيرة الحالية: <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="underline text-primary">عرض الملف</a>
+                    </p>
+                ) : (
+                    <p className="text-sm text-muted-foreground">لم يتم رفع سيرة ذاتية بعد.</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bio">نبذة عني</Label>
@@ -260,18 +317,56 @@ export default function AccountPage() {
                   <div className="space-y-4">
                     {postedJobs.length > 0 ? (
                       postedJobs.map((job) => (
-                        <Card key={job.id} className="flex items-center justify-between p-4">
-                          <div>
+                        <Card key={job.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 gap-4">
+                          <div className="flex-grow">
                             <h4 className="font-semibold">{job.title}</h4>
                             <p className="text-sm text-muted-foreground">
                               {job.location}
                             </p>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <Badge variant={job.status === 'مفتوح' ? 'default' : 'secondary'}>{job.status}</Badge>
-                            <Button variant="outline" size="sm">
-                              عرض التفاصيل
-                            </Button>
+                          <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
+                            <Badge variant={job.status === 'مفتوح' ? 'default' : 'secondary'} className="whitespace-nowrap">{job.status}</Badge>
+                             <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                                  عرض المتقدمين ({job.applicants?.length || 0})
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                  <DialogTitle>المتقدمون لوظيفة: {job.title}</DialogTitle>
+                                  <DialogDescription>
+                                    قائمة بالأشخاص الذين تقدموا لهذه الفرصة.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                {job.applicants && job.applicants.length > 0 ? (
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>الاسم</TableHead>
+                                                <TableHead>البريد الإلكتروني</TableHead>
+                                                <TableHead>تاريخ التقديم</TableHead>
+                                                <TableHead>الإجراء</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {job.applicants.map(applicant => (
+                                                <TableRow key={applicant.id}>
+                                                    <TableCell>{applicant.name}</TableCell>
+                                                    <TableCell>{applicant.email}</TableCell>
+                                                    <TableCell>{applicant.appliedAt}</TableCell>
+                                                    <TableCell>
+                                                        <Button variant="link" size="sm">عرض السيرة</Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                ) : (
+                                    <p className="text-center py-8 text-muted-foreground">لا يوجد متقدمون لهذه الوظيفة بعد.</p>
+                                )}
+                              </DialogContent>
+                            </Dialog>
                           </div>
                         </Card>
                       ))
@@ -315,3 +410,5 @@ export default function AccountPage() {
     </div>
   )
 }
+
+    
