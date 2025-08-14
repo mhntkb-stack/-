@@ -35,8 +35,8 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 md:h-20 items-center">
-        <div className="flex-1 flex items-center gap-4 md:gap-6">
+      <div className="container flex h-16 md:h-20 max-w-7xl items-center">
+        <div className="flex-1 flex items-center justify-start gap-4 md:gap-6">
           <Link href="/" className="flex items-center gap-2">
             <HandIcon />
             <span className="font-bold text-lg hidden sm:inline-block">مهنتك</span>
