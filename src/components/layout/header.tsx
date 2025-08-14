@@ -4,38 +4,42 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { UserNav } from '@/components/auth/user-nav';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Building, Briefcase } from 'lucide-react';
+import { Menu, Briefcase, Search, User, Rss, Handshake } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
+const HandIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-primary"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8 2 2 0 1 1 4 0"/></svg>
+)
+
 const navLinks = [
-  { href: '/jobs', label: 'الوظائف', icon: <Briefcase className="h-4 w-4" /> },
-  { href: '/employers', label: 'أصحاب العمل', icon: <Building className="h-4 w-4" /> },
+  { href: '/', label: 'الرئيسية' },
+  { href: '/jobs', label: 'ابحث عن فرصة' },
+  { href: '/employers', label: 'لأصحاب العمل' },
+  { href: '/cv-builder', label: 'محسن السيرة الذاتية' },
 ];
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   useEffect(() => {
-    // In a real app, you'd check for a token or session
-    // For this example, we'll just simulate the logged in state
     const loggedIn = Math.random() > 0.5;
     setIsLoggedIn(loggedIn);
   }, [])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
+      <div className="container flex h-20 max-w-screen-2xl items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
-            <Briefcase className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg">لمسة مهنتك</span>
+            <HandIcon />
+            <span className="font-bold text-lg">مهنتك</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
+                className="transition-colors hover:text-primary text-foreground/80"
               >
                 {link.label}
               </Link>
@@ -52,7 +56,7 @@ export default function Header() {
                 <Link href="/login">تسجيل الدخول</Link>
               </Button>
               <Button asChild>
-                <Link href="/register">إنشاء حساب</Link>
+                <Link href="/register">حساب جديد</Link>
               </Button>
             </>
           )}
@@ -61,7 +65,7 @@ export default function Header() {
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Open navigation menu</span>
               </Button>
@@ -69,8 +73,8 @@ export default function Header() {
             <SheetContent side="right">
               <div className="flex flex-col gap-6 p-6">
                 <Link href="/" className="flex items-center gap-2">
-                  <Briefcase className="h-6 w-6 text-primary" />
-                  <span className="font-bold text-lg">لمسة مهنتك</span>
+                   <HandIcon />
+                  <span className="font-bold text-lg">مهنتك</span>
                 </Link>
                 <nav className="flex flex-col gap-4">
                   {navLinks.map((link) => (
@@ -79,7 +83,6 @@ export default function Header() {
                       href={link.href}
                       className="flex items-center gap-2 text-lg font-medium"
                     >
-                      {link.icon}
                       {link.label}
                     </Link>
                   ))}
@@ -93,7 +96,7 @@ export default function Header() {
                         <Link href="/login">تسجيل الدخول</Link>
                       </Button>
                       <Button asChild>
-                        <Link href="/register">إنشاء حساب</Link>
+                        <Link href="/register">حساب جديد</Link>
                       </Button>
                     </>
                   )}

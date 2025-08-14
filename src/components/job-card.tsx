@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Briefcase } from 'lucide-react';
+import { MapPin, Briefcase, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 
 type JobCardProps = {
@@ -14,8 +14,10 @@ type JobCardProps = {
 };
 
 export default function JobCard({ title, company, location, type, logo, dataAiHint }: JobCardProps) {
+  const isSalary = type.includes('ريال يمني');
+
   return (
-    <Card className="hover:shadow-md transition-shadow duration-300 flex flex-col">
+    <Card className="hover:shadow-md transition-shadow duration-300 flex flex-col bg-card">
       <CardContent className="p-6 flex-grow">
         <div className="flex items-start gap-6">
           <Image
@@ -23,7 +25,7 @@ export default function JobCard({ title, company, location, type, logo, dataAiHi
             alt={`${company} logo`}
             width={64}
             height={64}
-            className="rounded-lg border p-1"
+            className="rounded-lg border p-1 bg-white"
             data-ai-hint={dataAiHint}
           />
           <div className="flex-grow">
@@ -35,8 +37,8 @@ export default function JobCard({ title, company, location, type, logo, dataAiHi
                 <span>{location}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Briefcase className="h-4 w-4" />
-                <span>{type}</span>
+                {isSalary ? <Wallet className="h-4 w-4" /> : <Briefcase className="h-4 w-4" />}
+                <span className={isSalary ? 'text-primary font-semibold' : ''}>{type}</span>
               </div>
             </div>
           </div>
