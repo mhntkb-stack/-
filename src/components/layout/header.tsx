@@ -57,8 +57,9 @@ export default function Header() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                        "transition-colors hover:text-primary",
-                        pathname === link.href ? "text-foreground font-semibold" : "text-foreground/70"
+                        "transition-all duration-300",
+                        pathname === link.href ? "text-foreground font-bold" : "text-foreground/70 hover:text-primary",
+                        link.href === '/jobs' && "bg-primary/10 text-primary font-bold py-2 px-4 rounded-full hover:bg-primary/20 hover:text-primary"
                     )}
                     >
                     {link.label}
