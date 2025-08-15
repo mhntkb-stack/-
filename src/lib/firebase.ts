@@ -4,12 +4,13 @@ import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 // فضلاً، استبدل هذا الكائن بإعدادات مشروع Firebase الخاص بك.
 // يمكنك العثور عليها في لوحة تحكم Firebase > إعدادات المشروع.
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  "projectId": "your-profession-touch",
+  "appId": "1:811982079255:web:c45a52957a43c681dda352",
+  "storageBucket": "your-profession-touch.firebasestorage.app",
+  "apiKey": "AIzaSyAGS8ZPztPQk1InzGvGzfTLwh5fxKPtATM",
+  "authDomain": "your-profession-touch.firebaseapp.com",
+  "measurementId": "",
+  "messagingSenderId": "811982079255"
 };
 
 // Initialize Firebase
