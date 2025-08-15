@@ -76,7 +76,7 @@ export default function Home() {
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             منصتك الأولى للفرص الحرفية والمهنية في صنعاء.
           </p>
-          <div className="w-full max-w-2xl mx-auto flex flex-col gap-4">
+          <div className="w-full max-w-3xl mx-auto flex flex-col gap-4">
             <form className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
                 <div className="relative md:col-span-3">
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
@@ -124,9 +124,9 @@ export default function Home() {
             </form>
             <div className="mt-8">
                  <Image
-                    src="https://placehold.co/600x400.png"
+                    src="https://placehold.co/700x400.png"
                     alt="عمال يعملون"
-                    width={600}
+                    width={700}
                     height={400}
                     className="rounded-2xl mx-auto shadow-lg"
                     data-ai-hint="workers construction"
