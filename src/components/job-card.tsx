@@ -73,7 +73,7 @@ export default function JobCard({ id, title, company, location, type, logo, data
             alt={`${company} logo`}
             width={64}
             height={64}
-            className="rounded-lg border p-1 bg-white"
+            className="rounded-full border p-1 bg-white object-cover"
             data-ai-hint={dataAiHint}
           />
           <div className="flex-grow">
