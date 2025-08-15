@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Building, Wrench, HandMetal, Palette, SprayCan } from 'lucide-react';
+import { Search, Building, Wrench, HandMetal, Palette, SprayCan, MapPin } from 'lucide-react';
 import JobCard from '@/components/job-card';
 import Link from 'next/link';
 import { featuredJobs } from '@/lib/jobs-data';
@@ -33,11 +33,6 @@ const features = [
     }
 ]
 
-const locations = [
-    "شارع الستين", "مذبح", "الحصب", "سعوان", "الزبيري", "التحرير", "عصر", "شملان", 
-    "جولة عمران", "جولة الرويشان", "الصافية", "شعوب", "باب اليمن", "صباحة", "الجامعة", "الحي السياسي"
-];
-
 export default function Home() {
   return (
     <>
@@ -50,30 +45,29 @@ export default function Home() {
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             مهنتك بلمسة هي منصة توظيف محلية تستهدف محافظة صنعاء، تجمع بين الباحثين عن عمل في المجالات الحرفية والمهنية وأصحاب الأعمال. تهدف المنصة إلى تسهيل التواصل بين الطرفين وتوفير وظائف مناسبة بسرعة وكفاءة.
           </p>
-          <div className="w-full max-w-2xl mx-auto">
-            <form className="w-full flex items-center gap-0 relative">
-              <Input
-                type="text"
-                placeholder="ابحث عن حرفة، مهارة، أو وظيفة..."
-                className="w-full pr-4 py-3 h-14 text-base rounded-full pl-36 border-2 focus-visible:ring-offset-0 focus-visible:ring-2"
-              />
-              <Button type="submit" size="lg" className="absolute left-2 h-11 rounded-full px-6 transition-transform transform hover:scale-105">
-                <Search className="h-5 w-5 ml-2" />
-                <span>بحث</span>
-              </Button>
+          <div className="w-full max-w-3xl mx-auto">
+            <form className="w-full grid grid-cols-1 md:grid-cols-5 items-center gap-2 md:gap-0 bg-card p-2 rounded-xl border shadow-sm">
+                <div className="relative md:col-span-2">
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+                    <Input
+                        type="text"
+                        placeholder="ابحث عن حرفة، مهارة..."
+                        className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
+                    />
+                </div>
+                <div className="hidden md:block w-px h-8 bg-border mx-2"></div>
+                <div className="relative md:col-span-2">
+                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+                    <Input
+                        type="text"
+                        placeholder="المنطقة أو الحي..."
+                        className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
+                    />
+                </div>
+                <Button type="submit" size="lg" className="md:col-span-1 h-12 rounded-lg transition-transform transform hover:scale-105 w-full">
+                    <span>بحث</span>
+                </Button>
             </form>
-          </div>
-          <div className="mt-8 w-full max-w-4xl mx-auto">
-             <div className="flex flex-wrap items-center justify-center gap-2">
-                 <span className="text-sm font-medium text-muted-foreground ml-2">أشهر المناطق:</span>
-                 {locations.map(loc => (
-                    <Button key={loc} variant="outline" size="sm" className="rounded-full hover:bg-primary/10 hover:border-primary/50 transition-colors duration-200">
-                        <Link href={`/jobs?location=${loc}`}>
-                           {loc}
-                        </Link>
-                    </Button>
-                 ))}
-             </div>
           </div>
         </div>
       </section>
