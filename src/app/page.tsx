@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Building, Wrench, HandMetal, Palette, SprayCan, MapPin } from 'lucide-react';
@@ -6,6 +8,7 @@ import JobCard from '@/components/job-card';
 import Link from 'next/link';
 import { featuredJobs } from '@/lib/jobs-data';
 import { Target, Briefcase, Users } from 'lucide-react';
+import { useState } from 'react';
 
 const categories = [
   { name: 'البناء والإنشاءات', icon: <Building className="h-8 w-8" /> },
@@ -33,7 +36,34 @@ const features = [
     }
 ]
 
+const locations = [
+  'شارع الستين', 'مذبح', 'الحصبة', 'سعوان', 'الزبيري', 'التحرير', 
+  'عصر', 'شملان', 'جولة عمران', 'جولة الرويشان', 'الصافية', 'شعوب', 
+  'باب اليمن', 'صباحة', 'الجامعة', 'الحي السياسي'
+];
+
 export default function Home() {
+  const [locationQuery, setLocationQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLocationQuery(value);
+    if (value.length > 0) {
+      const filteredSuggestions = locations.filter(loc =>
+        loc.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setLocationQuery(suggestion);
+    setSuggestions([]);
+  };
+
   return (
     <>
       {/* Hero Section */}
@@ -66,7 +96,26 @@ export default function Home() {
                         type="text"
                         placeholder="ابحث حسب المنطقة أو الحي..."
                         className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
+                        value={locationQuery}
+                        onChange={handleLocationChange}
+                        onFocus={() => { if(locationQuery) setSuggestions(locations.filter(loc => loc.toLowerCase().includes(locationQuery.toLowerCase())))}}
+                        onBlur={() => setTimeout(() => setSuggestions([]), 100)}
                     />
+                    {suggestions.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 bg-card border shadow-lg rounded-md mt-2 z-10 text-right">
+                        <ul className="py-2">
+                          {suggestions.map((suggestion, index) => (
+                            <li
+                              key={index}
+                              className="px-4 py-2 hover:bg-accent cursor-pointer"
+                              onClick={() => handleSuggestionClick(suggestion)}
+                            >
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                 </div>
                 <Button type="submit" size="lg" className="md:col-span-1 h-12 rounded-lg transition-transform transform hover:scale-105 w-full" variant="secondary">
                     <span>بحث بالموقع</span>
