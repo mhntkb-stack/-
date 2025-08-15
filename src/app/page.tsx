@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { featuredJobs } from '@/lib/jobs-data';
 import { Target, Briefcase, Users } from 'lucide-react';
 import { useState } from 'react';
+import Image from 'next/image';
 
 const categories = [
   { name: 'البناء والإنشاءات', icon: <Building className="h-8 w-8" /> },
@@ -81,7 +82,7 @@ export default function Home() {
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
                     <Input
                         type="text"
-                        placeholder="ابحث عن حرفة، مهارة، أو وظيفة..."
+                        placeholder="ابحث عن حرفة, مهارة, أو وظيفة..."
                         className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
                     />
                 </div>
@@ -122,7 +123,14 @@ export default function Home() {
                 </Button>
             </form>
             <div className="mt-8">
-                <Briefcase className="h-12 w-12 text-primary/80 mx-auto" />
+                 <Image
+                    src="https://placehold.co/150x150.png"
+                    alt="أدوات حرفية"
+                    width={150}
+                    height={150}
+                    className="rounded-full mx-auto shadow-lg"
+                    data-ai-hint="craftsmanship tools"
+                />
             </div>
           </div>
         </div>
