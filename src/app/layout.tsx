@@ -5,7 +5,7 @@ import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'لمسة مهنتك',
+  title: 'مهنتك بلمسة',
   description: 'منصة متخصصة للوظائف الحرفية في محافظة صنعاء',
 };
 

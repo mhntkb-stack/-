@@ -22,7 +22,7 @@ export default function Home() {
       <section className="w-full py-20 md:py-32 lg:py-40 bg-background">
         <div className="container mx-auto px-4 md:px-6 flex flex-col items-center text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-headline mb-4 text-foreground">
-            بلمسة، وظيفتك بين يديك
+            مهنتك بلمسة، وظيفتك بين يديك
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             منصتك المتخصصة لإيجاد فرص عمل للحرفيين في صنعاء. ابدأ مسيرتك الحرفية اليوم.

@@ -48,7 +48,7 @@ export default function Header() {
             <Link href="/" className="mr-6 flex items-center space-x-2">
                 <HandIcon />
                 <span className="font-bold sm:inline-block">
-                لمسة مهنتك
+                مهنتك بلمسة
                 </span>
             </Link>
             <nav className="flex items-center space-x-6 text-sm font-medium">
@@ -92,7 +92,7 @@ export default function Header() {
                 <div className="flex flex-col gap-6 p-6">
                     <Link href="/" onClick={closeMobileMenu} className="flex items-center gap-2 mb-4">
                       <HandIcon />
-                      <span className="font-bold text-xl">مهنتك</span>
+                      <span className="font-bold text-xl">مهنتك بلمسة</span>
                     </Link>
                     <nav className="flex flex-col gap-4">
                     {navLinks.map((link) => (
