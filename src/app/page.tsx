@@ -73,7 +73,7 @@ export default function Home() {
             وظيفتك في يديك
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            مهنتك بلمسة هي منصة توظيف محلية تستهدف محافظة صنعاء، تجمع بين الباحثين عن عمل في المجالات الحرفية والمهنية وأصحاب الأعمال. تهدف المنصة إلى تسهيل التواصل بين الطرفين وتوفير وظائف مناسبة بسرعة وكفاءة.
+            منصتك الأولى للفرص الحرفية والمهنية في صنعاء. نصلك بأصحاب العمل بسهولة وسرعة.
           </p>
           <div className="w-full max-w-2xl mx-auto flex flex-col gap-4">
             <form className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
