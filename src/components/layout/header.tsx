@@ -5,18 +5,13 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { UserNav } from '@/components/auth/user-nav';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-import { Menu, ShieldCheck } from 'lucide-react';
+import { Menu, ShieldCheck, Briefcase } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { ADMIN_EMAIL } from '@/lib/config';
-
-
-const HandIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8 2 2 0 1 1 4 0"/></svg>
-)
 
 const navLinks = [
   { href: '/', label: 'الرئيسية' },
@@ -46,7 +41,7 @@ export default function Header() {
       <div className="container flex h-16 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
             <Link href="/" className="mr-6 flex items-center space-x-2">
-                <HandIcon />
+                <Briefcase className="h-6 w-6 text-primary" />
                 <span className="font-bold sm:inline-block">
                 مهنتك بلمسة
                 </span>
@@ -92,7 +87,7 @@ export default function Header() {
                 <SheetContent side="right">
                 <div className="flex flex-col gap-6 p-6">
                     <Link href="/" onClick={closeMobileMenu} className="flex items-center gap-2 mb-4">
-                      <HandIcon />
+                      <Briefcase className="h-6 w-6 text-primary" />
                       <span className="font-bold text-xl">مهنتك بلمسة</span>
                     </Link>
                     <nav className="flex flex-col gap-4">
