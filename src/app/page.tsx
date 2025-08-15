@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Building, Wrench, HandMetal, Palette, Utensils, SprayCan, Droplets } from 'lucide-react';
+import { Search, Building, Wrench, HandMetal, Palette, Utensils, SprayCan, Droplets, Target, Briefcase, Users } from 'lucide-react';
 import JobCard from '@/components/job-card';
 import Link from 'next/link';
 import { featuredJobs } from '@/lib/jobs-data';
@@ -13,6 +13,24 @@ const categories = [
   { name: 'الأعمال الفنية', icon: <Palette className="h-8 w-8" /> },
   { name: 'الدهان', icon: <SprayCan className="h-8 w-8" /> },
 ];
+
+const features = [
+    {
+        icon: <Target className="h-10 w-10 text-primary" />,
+        title: 'فرص مستهدفة',
+        description: 'نصلك بأفضل الفرص الحرفية المناسبة لمهاراتك وتخصصك في منطقتك مباشرة.'
+    },
+    {
+        icon: <Briefcase className="h-10 w-10 text-primary" />,
+        title: 'تخصص واحترافية',
+        description: 'منصتنا متخصصة في الوظائف الحرفية فقط، مما يضمن لك نتائج دقيقة وعروض عمل جادة.'
+    },
+    {
+        icon: <Users className="h-10 w-10 text-primary" />,
+        title: 'تواصل مباشر',
+        description: 'نسهل عليك التواصل المباشر والفعال مع أصحاب العمل بدون أي وسطاء أو تعقيدات.'
+    }
+]
 
 export default function Home() {
   return (
@@ -50,7 +68,7 @@ export default function Home() {
               تصفح حسب الحرفة
             </h2>
           </div>
-          <div className="w-full max-w-6xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+          <div className="w-full max-w-6xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
             {categories.map((category) => (
               <Link href="/jobs" key={category.name}
                 className="group flex flex-col items-center justify-center text-center gap-3 p-4 bg-card rounded-lg border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
@@ -86,6 +104,30 @@ export default function Home() {
         </div>
       </section>
       
+        {/* Why Us Section */}
+      <section className="w-full py-16 md:py-24 bg-secondary/30">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center w-full max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4 font-headline">
+              لماذا تختار منصتنا؟
+            </h2>
+            <p className="text-muted-foreground md:text-lg mb-12">
+                نحن نركز على تمكين الحرفيين وربطهم بأفضل الفرص المتاحة.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {features.map((feature) => (
+              <div key={feature.title} className="flex flex-col items-center text-center p-6 bg-card rounded-lg border shadow-sm">
+                <div className="mb-4">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }
