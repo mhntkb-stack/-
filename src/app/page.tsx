@@ -31,7 +31,7 @@ export default function Home() {
             <form className="w-full flex items-center gap-0 relative">
               <Input
                 type="text"
-                placeholder="ابحث عن حرفة أمثال نجارة، سباكة، كهرباء..."
+                placeholder="ابحث عن حرفة، مهارة، أو وظيفة..."
                 className="w-full pr-4 py-3 h-14 text-base rounded-full pl-16 border-2 focus-visible:ring-offset-0 focus-visible:ring-2"
               />
               <Button type="submit" size="lg" className="absolute left-2 h-11 rounded-full px-6">
