@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Building, Wrench, HandMetal, Palette, Utensils, SprayCan } from 'lucide-react';
+import { Search, Building, Wrench, HandMetal, Palette, Utensils, SprayCan, Droplets } from 'lucide-react';
 import JobCard from '@/components/job-card';
 import Link from 'next/link';
 import { featuredJobs } from '@/lib/jobs-data';
@@ -11,7 +11,7 @@ const categories = [
   { name: 'الصيانة', icon: <Wrench className="h-8 w-8" /> },
   { name: 'الحرف اليدوية', icon: <HandMetal className="h-8 w-8" /> },
   { name: 'الأعمال الفنية', icon: <Palette className="h-8 w-8" /> },
-  { name: 'المجال الغذائي', icon: <Utensils className="h-8 w-8" /> },
+  { name: 'السباكة', icon: <Droplets className="h-8 w-8" /> },
   { name: 'الدهان', icon: <SprayCan className="h-8 w-8" /> },
 ];
 
@@ -51,7 +51,7 @@ export default function Home() {
               تصفح حسب الحرفة
             </h2>
           </div>
-          <div className="w-full max-w-6xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+          <div className="w-full max-w-6xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 md:gap-6">
             {categories.map((category) => (
               <Link href="/jobs" key={category.name}
                 className="group flex flex-col items-center justify-center text-center gap-3 p-4 bg-card rounded-lg border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
