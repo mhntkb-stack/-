@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { getFirebaseApp } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { ADMIN_EMAIL } from '@/lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +25,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ users: 0, jobs: 0 });
   const router = useRouter();
+  const app = getFirebaseApp();
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -38,7 +39,7 @@ export default function AdminPage() {
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, [router, app]);
 
   useEffect(() => {
     if (!user) return;
