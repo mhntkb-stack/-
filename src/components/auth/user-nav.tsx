@@ -14,7 +14,7 @@ import {
 import Link from 'next/link';
 import { User, Settings, LifeBuoy, LogOut } from 'lucide-react';
 import { getAuth, signOut } from 'firebase/auth';
-import { getFirebaseApp } from '@/lib/firebase';
+import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
@@ -27,7 +27,6 @@ export function UserNav() {
   const [userInitial, setUserInitial] = useState('');
 
   useEffect(() => {
-    const app = getFirebaseApp();
     const auth = getAuth(app);
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
@@ -41,7 +40,6 @@ export function UserNav() {
   
   const handleLogout = async () => {
     try {
-      const app = getFirebaseApp();
       const auth = getAuth(app);
       await signOut(auth);
       toast({
