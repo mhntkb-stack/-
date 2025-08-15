@@ -47,4 +47,13 @@ export const featuredJobs = [
     logo: 'https://placehold.co/100x100.png',
     dataAiHint: 'company logo construction'
   },
+  {
+    id: 'feat-5',
+    title: 'سباك محترف',
+    company: 'خدمات الصيانة المتكاملة',
+    location: 'صنعاء، حدة',
+    type: 'عقد',
+    logo: 'https://placehold.co/100x100.png',
+    dataAiHint: 'company logo plumbing'
+  },
 ];
