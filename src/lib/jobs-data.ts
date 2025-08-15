@@ -53,7 +53,7 @@ export const featuredJobs = [
     company: 'خدمات الصيانة المتكاملة',
     location: 'صنعاء، حدة',
     type: 'عقد',
-    logo: 'https://placehold.co/100x100.png',
-    dataAiHint: 'company logo plumbing'
+    logo: '/images/plumber.png',
+    dataAiHint: 'plumber tool'
   },
 ];
