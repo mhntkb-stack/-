@@ -45,27 +45,31 @@ export default function Home() {
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             مهنتك بلمسة هي منصة توظيف محلية تستهدف محافظة صنعاء، تجمع بين الباحثين عن عمل في المجالات الحرفية والمهنية وأصحاب الأعمال. تهدف المنصة إلى تسهيل التواصل بين الطرفين وتوفير وظائف مناسبة بسرعة وكفاءة.
           </p>
-          <div className="w-full max-w-3xl mx-auto">
-            <form className="w-full grid grid-cols-1 md:grid-cols-5 items-center gap-2 md:gap-0 bg-card p-2 rounded-xl border shadow-sm">
-                <div className="relative md:col-span-2">
+          <div className="w-full max-w-2xl mx-auto flex flex-col gap-4">
+            <form className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
+                <div className="relative md:col-span-3">
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
                     <Input
                         type="text"
-                        placeholder="ابحث عن حرفة، مهارة..."
-                        className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
-                    />
-                </div>
-                <div className="hidden md:block w-px h-8 bg-border mx-2"></div>
-                <div className="relative md:col-span-2">
-                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
-                    <Input
-                        type="text"
-                        placeholder="المنطقة أو الحي..."
+                        placeholder="ابحث عن حرفة، مهارة، أو وظيفة..."
                         className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
                     />
                 </div>
                 <Button type="submit" size="lg" className="md:col-span-1 h-12 rounded-lg transition-transform transform hover:scale-105 w-full">
                     <span>بحث</span>
+                </Button>
+            </form>
+             <form className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
+                <div className="relative md:col-span-3">
+                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+                    <Input
+                        type="text"
+                        placeholder="ابحث حسب المنطقة أو الحي..."
+                        className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
+                    />
+                </div>
+                <Button type="submit" size="lg" className="md:col-span-1 h-12 rounded-lg transition-transform transform hover:scale-105 w-full" variant="secondary">
+                    <span>بحث بالموقع</span>
                 </Button>
             </form>
           </div>
