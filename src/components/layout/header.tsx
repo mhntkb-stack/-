@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { UserNav } from '@/components/auth/user-nav';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { Menu, ShieldCheck } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
@@ -27,6 +27,7 @@ const navLinks = [
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const auth = getAuth(app);
 
@@ -37,6 +38,8 @@ export default function Header() {
     });
     return () => unsubscribe();
   }, [auth]);
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -78,7 +81,7 @@ export default function Header() {
         
         {/* Mobile Nav */}
         <div className="md:hidden">
-            <Sheet>
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                     <Menu className="h-6 w-6" />
@@ -87,23 +90,25 @@ export default function Header() {
                 </SheetTrigger>
                 <SheetContent side="right">
                 <div className="flex flex-col gap-6 p-6">
-                    <Link href="/" className="flex items-center gap-2 mb-4">
-                    <HandIcon />
-                    <span className="font-bold text-xl">مهنتك</span>
+                    <Link href="/" onClick={closeMobileMenu} className="flex items-center gap-2 mb-4">
+                      <HandIcon />
+                      <span className="font-bold text-xl">مهنتك</span>
                     </Link>
                     <nav className="flex flex-col gap-4">
                     {navLinks.map((link) => (
                         <Link
-                        key={link.href}
-                        href={link.href}
-                        className="flex items-center gap-2 text-lg font-medium hover:text-primary transition-colors"
+                          key={link.href}
+                          href={link.href}
+                          onClick={closeMobileMenu}
+                          className="flex items-center gap-2 text-lg font-medium hover:text-primary transition-colors"
                         >
-                        {link.label}
+                          {link.label}
                         </Link>
                     ))}
                      {isAdmin && (
                         <Link
                             href="/admin"
+                            onClick={closeMobileMenu}
                             className="flex items-center gap-2 text-lg font-medium hover:text-primary transition-colors"
                         >
                             <ShieldCheck className="h-5 w-5" />
@@ -114,12 +119,12 @@ export default function Header() {
                     <div className="border-t pt-6 mt-4 flex flex-col gap-4">
                     {!user && (
                         <>
-                        <Button variant="outline" asChild>
-                            <Link href="/login">تسجيل الدخول</Link>
-                        </Button>
-                        <Button asChild>
-                            <Link href="/register">حساب جديد</Link>
-                        </Button>
+                          <Button variant="outline" asChild>
+                              <Link href="/login" onClick={closeMobileMenu}>تسجيل الدخول</Link>
+                          </Button>
+                          <Button asChild>
+                              <Link href="/register" onClick={closeMobileMenu}>حساب جديد</Link>
+                          </Button>
                         </>
                     )}
                     </div>
