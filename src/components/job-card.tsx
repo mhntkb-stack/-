@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { MapPin, Briefcase, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 import { getAuth } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { getFirebaseApp } from '@/lib/firebase';
 import { getDatabase, ref, set, serverTimestamp, push } from 'firebase/database';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -27,6 +27,7 @@ export default function JobCard({ id, title, company, location, type, logo, data
   const router = useRouter();
 
   const handleApply = async () => {
+    const app = getFirebaseApp();
     const auth = getAuth(app);
     const user = auth.currentUser;
     if (!user) {

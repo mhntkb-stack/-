@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { getFirebaseApp } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { ADMIN_EMAIL } from '@/lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +27,7 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const app = getFirebaseApp();
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
@@ -43,6 +44,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!user) return;
     
+    const app = getFirebaseApp();
     const db = getDatabase(app);
     const fetchStats = async () => {
       const usersRef = ref(db, 'users');

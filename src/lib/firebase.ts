@@ -10,12 +10,12 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let app: FirebaseApp;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApp();
+function getFirebaseApp(): FirebaseApp {
+    if (getApps().length === 0) {
+        return initializeApp(firebaseConfig);
+    } else {
+        return getApp();
+    }
 }
 
-
-export { app };
+export { getFirebaseApp };

@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Briefcase } from 'lucide-react';
 import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { getFirebaseApp } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -37,6 +37,7 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
+      const app = getFirebaseApp();
       const auth = getAuth(app);
       await signInWithEmailAndPassword(auth, email, password);
       toast({
@@ -60,6 +61,7 @@ export default function LoginPage() {
     setError(null);
     const provider = new GoogleAuthProvider();
     try {
+      const app = getFirebaseApp();
       const auth = getAuth(app);
       await signInWithPopup(auth, provider);
        toast({

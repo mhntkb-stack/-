@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, Building, Users, Briefcase } from 'lucide-react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { getFirebaseApp } from '@/lib/firebase';
 import Link from 'next/link';
 
 // Dummy data for posted jobs
@@ -28,6 +28,7 @@ export default function EmployersPage() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    const app = getFirebaseApp();
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
