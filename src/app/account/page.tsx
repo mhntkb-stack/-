@@ -40,6 +40,7 @@ interface Applicant {
     name?: string;
     email?: string;
     appliedAt: string;
+    resumeUrl?: string;
 }
 
 interface PostedJob {
@@ -84,12 +85,21 @@ export default function AccountPage() {
                   const userRef = ref(db, `users/${userId}`);
                   const userSnapshot = await get(userRef);
                   const userData = userSnapshot.val();
+
+                  let applicantResumeUrl: string | undefined;
+                  try {
+                      const resumeRef = storageRef(storage, `resumes/${userId}/resume.pdf`);
+                      applicantResumeUrl = await getDownloadURL(resumeRef);
+                  } catch (error) {
+                      applicantResumeUrl = undefined;
+                  }
                   
                   jobApplicants.push({
                       id: userId,
                       name: userData?.displayName || 'غير متوفر',
                       email: userData?.email || 'غير متوفر',
-                      appliedAt: userApplications[appId].appliedAt ? format(new Date(userApplications[appId].appliedAt), 'yyyy-MM-dd') : 'N/A'
+                      appliedAt: userApplications[appId].appliedAt ? format(new Date(userApplications[appId].appliedAt), 'yyyy-MM-dd') : 'N/A',
+                      resumeUrl: applicantResumeUrl
                   });
               }
           }
@@ -356,7 +366,15 @@ export default function AccountPage() {
                                                     <TableCell>{applicant.email}</TableCell>
                                                     <TableCell>{applicant.appliedAt}</TableCell>
                                                     <TableCell>
-                                                        <Button variant="link" size="sm">عرض السيرة</Button>
+                                                      {applicant.resumeUrl ? (
+                                                        <Button variant="link" size="sm" asChild>
+                                                          <a href={applicant.resumeUrl} target="_blank" rel="noopener noreferrer">
+                                                            عرض السيرة
+                                                          </a>
+                                                        </Button>
+                                                      ) : (
+                                                        <span className="text-xs text-muted-foreground">لا يوجد</span>
+                                                      )}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -410,5 +428,3 @@ export default function AccountPage() {
     </div>
   )
 }
-
-    

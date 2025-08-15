@@ -1,15 +1,17 @@
+
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { UserNav } from '@/components/auth/user-nav';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Briefcase } from 'lucide-react';
+import { Menu, ShieldCheck } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { app } from '@/lib/firebase';
+import { ADMIN_EMAIL } from '@/lib/config';
 
 
 const HandIcon = () => (
@@ -23,13 +25,15 @@ const navLinks = [
 ];
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
   const auth = getAuth(app);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsAdmin(currentUser?.email === ADMIN_EMAIL);
     });
     return () => unsubscribe();
   }, [auth]);
@@ -57,6 +61,18 @@ export default function Header() {
                     {link.label}
                     </Link>
                 ))}
+                 {isAdmin && (
+                    <Link
+                        href="/admin"
+                        className={cn(
+                        "transition-colors hover:text-foreground/80 flex items-center gap-1",
+                        pathname === '/admin' ? "text-foreground" : "text-foreground/60"
+                        )}
+                    >
+                        <ShieldCheck className="h-4 w-4" />
+                        <span>الإدارة</span>
+                    </Link>
+                 )}
             </nav>
         </div>
         
@@ -85,9 +101,18 @@ export default function Header() {
                         {link.label}
                         </Link>
                     ))}
+                     {isAdmin && (
+                        <Link
+                            href="/admin"
+                            className="flex items-center gap-2 text-lg font-medium hover:text-primary transition-colors"
+                        >
+                            <ShieldCheck className="h-5 w-5" />
+                            <span>الإدارة</span>
+                        </Link>
+                     )}
                     </nav>
                     <div className="border-t pt-6 mt-4 flex flex-col gap-4">
-                    {!isLoggedIn && (
+                    {!user && (
                         <>
                         <Button variant="outline" asChild>
                             <Link href="/login">تسجيل الدخول</Link>
@@ -105,7 +130,7 @@ export default function Header() {
 
 
         <div className="flex flex-1 items-center justify-end space-x-2">
-          {isLoggedIn ? (
+          {user ? (
             <UserNav />
           ) : (
             <div className='hidden md:flex items-center gap-2'>
