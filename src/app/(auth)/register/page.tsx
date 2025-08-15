@@ -13,10 +13,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Briefcase } from 'lucide-react';
 import { useState } from 'react';
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+
+const GoogleIcon = () => (
+    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4">
+        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.62 1.9-4.73 1.9-3.41 0-6.19-2.84-6.19-6.38s2.78-6.38 6.19-6.38c1.84 0 3.22.66 4.21 1.62l2.56-2.56c-1.62-1.51-3.79-2.4-6.77-2.4-5.49 0-9.91 4.49-9.91 9.91s4.42 9.91 9.91 9.91c2.84 0 5.22-1 7.02-2.69 1.9-1.84 2.92-4.38 2.92-7.17 0-.6-.06-1.12-.18-1.62h-9.56z" />
+    </svg>
+)
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
@@ -52,6 +58,28 @@ export default function RegisterPage() {
     }
     setLoading(false);
   };
+  
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+       toast({
+        title: "تم إنشاء الحساب بنجاح",
+        description: "أهلاً بك في منصتنا!",
+      });
+      router.push('/account');
+    } catch (error) {
+       setError("فشل إنشاء الحساب باستخدام جوجل. يرجى المحاولة مرة أخرى.");
+       toast({
+        variant: "destructive",
+        title: "خطأ في إنشاء الحساب",
+        description: "فشل إنشاء الحساب باستخدام جوجل. يرجى المحاولة مرة أخرى.",
+      });
+    }
+    setLoading(false);
+  }
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] py-12">
@@ -101,6 +129,18 @@ export default function RegisterPage() {
             </Button>
             {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           </form>
+           <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">أو أنشئ حساب بـ</span>
+              </div>
+            </div>
+            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
+                <GoogleIcon />
+                <span>المتابعة باستخدام جوجل</span>
+            </Button>
           <div className="mt-4 text-center text-sm">
             هل لديك حساب بالفعل؟{' '}
             <Link href="/login" className="underline">
