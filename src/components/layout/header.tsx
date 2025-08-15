@@ -51,14 +51,15 @@ export default function Header() {
                 مهنتك بلمسة
                 </span>
             </Link>
-            <nav className="flex items-center space-x-6 text-sm font-medium">
+            <nav className="flex items-center gap-2 text-sm font-medium">
                 {navLinks.map((link) => (
                     <Link
                     key={link.href}
                     href={link.href}
                     className={cn(
-                        "transition-colors hover:text-primary",
-                        pathname === link.href ? "text-foreground" : "text-foreground/60"
+                        "transition-colors hover:text-primary px-3 py-2 rounded-md",
+                        link.href === '/' ? 'mr-6' : '',
+                        pathname === link.href ? "text-foreground font-bold" : "text-foreground/70"
                     )}
                     >
                     {link.label}
