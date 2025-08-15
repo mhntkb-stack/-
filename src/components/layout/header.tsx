@@ -51,7 +51,7 @@ export default function Header() {
                 مهنتك بلمسة
                 </span>
             </Link>
-            <nav className="flex items-center space-x-8 text-sm font-medium">
+            <nav className="flex items-center space-x-6 text-sm font-medium">
                 {navLinks.map((link) => (
                     <Link
                     key={link.href}
