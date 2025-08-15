@@ -124,10 +124,10 @@ export default function Home() {
             </form>
             <div className="mt-8">
                  <Image
-                    src="https://placehold.co/400x600.png"
+                    src="https://placehold.co/600x400.png"
                     alt="عمال يعملون"
-                    width={400}
-                    height={600}
+                    width={600}
+                    height={400}
                     className="rounded-2xl mx-auto shadow-lg"
                     data-ai-hint="workers construction"
                 />
