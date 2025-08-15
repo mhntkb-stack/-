@@ -20,7 +20,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
 
 export function UserNav() {
-  const auth = getAuth(app);
   const router = useRouter();
   const { toast } = useToast();
   const [userName, setUserName] = useState('');
@@ -28,6 +27,7 @@ export function UserNav() {
   const [userInitial, setUserInitial] = useState('');
 
   useEffect(() => {
+    const auth = getAuth(app);
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
         setUserName(user.displayName || 'مستخدم');
@@ -36,10 +36,11 @@ export function UserNav() {
       }
     });
     return () => unsubscribe();
-  }, [auth]);
+  }, []);
   
   const handleLogout = async () => {
     try {
+      const auth = getAuth(app);
       await signOut(auth);
       toast({
         title: "تم تسجيل الخروج بنجاح",

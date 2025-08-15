@@ -23,12 +23,11 @@ type JobCardProps = {
 
 export default function JobCard({ id, title, company, location, type, logo, dataAiHint }: JobCardProps) {
   const isSalary = type.includes('ريال يمني');
-  const auth = getAuth(app);
-  const db = getDatabase(app);
   const { toast } = useToast();
   const router = useRouter();
 
   const handleApply = async () => {
+    const auth = getAuth(app);
     const user = auth.currentUser;
     if (!user) {
       toast({
@@ -41,6 +40,7 @@ export default function JobCard({ id, title, company, location, type, logo, data
     }
 
     try {
+      const db = getDatabase(app);
       const applicationsRef = ref(db, `applications/${user.uid}`);
       const newApplicationRef = push(applicationsRef);
       await set(newApplicationRef, {

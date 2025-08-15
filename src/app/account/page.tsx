@@ -64,7 +64,7 @@ export default function AccountPage() {
   const [newJobLocation, setNewJobLocation] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
-
+  
   const auth = getAuth(app);
   const db = getDatabase(app);
   const storage = getStorage(app);

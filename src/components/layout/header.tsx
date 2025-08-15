@@ -24,15 +24,15 @@ export default function Header() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const auth = getAuth(app);
 
   useEffect(() => {
+    const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setIsAdmin(currentUser?.email === ADMIN_EMAIL);
     });
     return () => unsubscribe();
-  }, [auth]);
+  }, []);
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 

@@ -24,11 +24,10 @@ export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ users: 0, jobs: 0 });
-  const auth = getAuth(app);
-  const db = getDatabase(app);
   const router = useRouter();
 
   useEffect(() => {
+    const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
         router.push('/');
@@ -39,9 +38,12 @@ export default function AdminPage() {
     });
 
     return () => unsubscribe();
-  }, [auth, router]);
+  }, [router]);
 
   useEffect(() => {
+    if (!user) return;
+    
+    const db = getDatabase(app);
     const fetchStats = async () => {
       const usersRef = ref(db, 'users');
       const jobsRef = ref(db, 'jobs');
@@ -64,7 +66,7 @@ export default function AdminPage() {
     };
 
     fetchStats();
-  }, [db]);
+  }, [user]);
 
   if (loading) {
     return <div className="container py-12 text-center">جارٍ التحقق من الأذونات...</div>;

@@ -30,7 +30,6 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const auth = getAuth(app);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -39,6 +38,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
     try {
+      const auth = getAuth(app);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, {
         displayName: fullName
@@ -64,6 +64,7 @@ export default function RegisterPage() {
     setError(null);
     const provider = new GoogleAuthProvider();
     try {
+      const auth = getAuth(app);
       await signInWithPopup(auth, provider);
        toast({
         title: "تم إنشاء الحساب بنجاح",

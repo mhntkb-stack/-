@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, Building, Users, Briefcase } from 'lucide-react';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import Link from 'next/link';
 
@@ -25,16 +25,15 @@ const postedJobs = [
 ];
 
 export default function EmployersPage() {
-  const [user, setUser] = useState(null);
-  const auth = getAuth(app);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      // @ts-ignore
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
     return () => unsubscribe();
-  }, [auth]);
+  }, []);
 
   if (!user) {
     return (

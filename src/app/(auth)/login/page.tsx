@@ -29,7 +29,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const auth = getAuth(app);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -38,6 +37,7 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
+      const auth = getAuth(app);
       await signInWithEmailAndPassword(auth, email, password);
       toast({
         title: "تم تسجيل الدخول بنجاح",
@@ -60,6 +60,7 @@ export default function LoginPage() {
     setError(null);
     const provider = new GoogleAuthProvider();
     try {
+      const auth = getAuth(app);
       await signInWithPopup(auth, provider);
        toast({
         title: "تم تسجيل الدخول بنجاح",
