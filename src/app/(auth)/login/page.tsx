@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Briefcase } from 'lucide-react';
 import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { getFirebaseApp } from '@/lib/firebase';
+import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,7 +31,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const app = getFirebaseApp();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

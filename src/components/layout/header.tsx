@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { getFirebaseApp } from '@/lib/firebase';
+import { app } from '@/lib/firebase';
 import { ADMIN_EMAIL } from '@/lib/config';
 
 const navLinks = [
@@ -26,7 +26,6 @@ export default function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const app = getFirebaseApp();
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);

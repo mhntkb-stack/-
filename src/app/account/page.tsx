@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import SmartRecommendations from "@/components/smart-recommendations"
 import { getAuth, onAuthStateChanged, User, updateProfile } from "firebase/auth";
-import { getFirebaseApp } from '@/lib/firebase';
+import { app } from '@/lib/firebase';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -65,7 +65,6 @@ export default function AccountPage() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   
-  const app = getFirebaseApp();
   const auth = getAuth(app);
   const db = getDatabase(app);
   const storage = getStorage(app);

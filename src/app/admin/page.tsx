@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { getFirebaseApp } from '@/lib/firebase';
+import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { ADMIN_EMAIL } from '@/lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +25,6 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ users: 0, jobs: 0 });
   const router = useRouter();
-  const app = getFirebaseApp();
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -39,7 +38,7 @@ export default function AdminPage() {
     });
 
     return () => unsubscribe();
-  }, [router, app]);
+  }, [router]);
 
   useEffect(() => {
     if (!user) return;
@@ -67,7 +66,7 @@ export default function AdminPage() {
     };
 
     fetchStats();
-  }, [user, app]);
+  }, [user]);
 
   if (loading) {
     return <div className="container py-12 text-center">جارٍ التحقق من الأذونات...</div>;
