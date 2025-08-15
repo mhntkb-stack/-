@@ -73,7 +73,7 @@ export default function Home() {
             وظيفتك في يديك
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            منصتك الأولى للفرص الحرفية والمهنية في صنعاء. نصلك بأصحاب العمل بسهولة وسرعة.
+            منصتك الأولى للفرص الحرفية والمهنية في صنعاء.
           </p>
           <div className="w-full max-w-2xl mx-auto flex flex-col gap-4">
             <form className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
@@ -121,6 +121,9 @@ export default function Home() {
                     <span>بحث بالموقع</span>
                 </Button>
             </form>
+            <div className="mt-8">
+                <Briefcase className="h-12 w-12 text-primary/80 mx-auto" />
+            </div>
           </div>
         </div>
       </section>
