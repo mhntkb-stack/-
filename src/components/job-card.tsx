@@ -65,7 +65,7 @@ export default function JobCard({ id, title, company, location, type, logo, data
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow duration-300 flex flex-col bg-card">
+    <Card className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col bg-card rounded-2xl">
       <CardContent className="p-6 flex-grow">
         <div className="flex items-start gap-6">
           <Image
@@ -93,7 +93,7 @@ export default function JobCard({ id, title, company, location, type, logo, data
         </div>
       </CardContent>
       <div className="p-6 pt-0 flex items-center justify-end">
-          <Button onClick={handleApply}>التقديم الآن</Button>
+          <Button onClick={handleApply} className="transition-transform transform hover:scale-105">التقديم الآن</Button>
       </div>
     </Card>
   );

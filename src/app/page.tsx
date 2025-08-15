@@ -1,10 +1,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Building, Wrench, HandMetal, Palette, Utensils, SprayCan, Droplets, Target, Briefcase, Users } from 'lucide-react';
+import { Search, Building, Wrench, HandMetal, Palette, SprayCan } from 'lucide-react';
 import JobCard from '@/components/job-card';
 import Link from 'next/link';
 import { featuredJobs } from '@/lib/jobs-data';
+import { Target, Briefcase, Users } from 'lucide-react';
 
 const categories = [
   { name: 'البناء والإنشاءات', icon: <Building className="h-8 w-8" /> },
@@ -38,7 +39,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32 lg:py-40 bg-background">
         <div className="container mx-auto px-4 md:px-6 flex flex-col items-center text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-headline mb-4 text-foreground">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-headline mb-4 text-foreground drop-shadow-sm">
             وظيفتك في يديك
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
@@ -49,9 +50,9 @@ export default function Home() {
               <Input
                 type="text"
                 placeholder="ابحث عن حرفة، مهارة، أو وظيفة..."
-                className="w-full pr-4 py-3 h-14 text-base rounded-full pl-16 border-2 focus-visible:ring-offset-0 focus-visible:ring-2"
+                className="w-full pr-4 py-3 h-14 text-base rounded-full pl-36 border-2 focus-visible:ring-offset-0 focus-visible:ring-2"
               />
-              <Button type="submit" size="lg" className="absolute left-2 h-11 rounded-full px-6">
+              <Button type="submit" size="lg" className="absolute left-2 h-11 rounded-full px-6 transition-transform transform hover:scale-105">
                 <Search className="h-5 w-5 ml-2" />
                 <span>بحث</span>
               </Button>
@@ -68,15 +69,15 @@ export default function Home() {
               تصفح حسب الحرفة
             </h2>
           </div>
-          <div className="w-full max-w-6xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+          <div className="w-full max-w-6xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
             {categories.map((category) => (
               <Link href="/jobs" key={category.name}
-                className="group flex flex-col items-center justify-center text-center gap-3 p-4 bg-card rounded-lg border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                className="group flex flex-col items-center justify-center text-center gap-4 p-6 bg-card rounded-2xl border shadow-sm hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 cursor-pointer"
               >
-                <div className="h-16 w-16 flex items-center justify-center rounded-full bg-primary/10 text-primary transition-colors">
+                <div className="h-20 w-20 flex items-center justify-center rounded-full bg-primary/10 text-primary transition-colors">
                   {category.icon}
                 </div>
-                <h3 className="text-md font-semibold">{category.name}</h3>
+                <h3 className="text-lg font-semibold">{category.name}</h3>
               </Link>
             ))}
           </div>
@@ -91,13 +92,13 @@ export default function Home() {
               فرص مميزة وحصرية
             </h2>
           </div>
-          <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8">
             {featuredJobs.map((job) => (
               <JobCard key={job.id} {...job} />
             ))}
           </div>
           <div className="text-center mt-12">
-            <Button variant="outline" size="lg" asChild>
+            <Button variant="outline" size="lg" asChild className="transition-transform transform hover:scale-105">
               <Link href="/jobs">عرض كل الوظائف</Link>
             </Button>
           </div>
@@ -117,8 +118,8 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {features.map((feature) => (
-              <div key={feature.title} className="flex flex-col items-center text-center p-6 bg-card rounded-lg border shadow-sm">
-                <div className="mb-4">
+              <div key={feature.title} className="flex flex-col items-center text-center p-8 bg-card rounded-2xl border shadow-sm">
+                <div className="mb-6">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
