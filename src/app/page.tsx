@@ -33,6 +33,11 @@ const features = [
     }
 ]
 
+const locations = [
+    "شارع الستين", "مذبح", "الحصب", "سعوان", "الزبيري", "التحرير", "عصر", "شملان", 
+    "جولة عمران", "جولة الرويشان", "الصافية", "شعوب", "باب اليمن", "صباحة", "الجامعة", "الحي السياسي"
+];
+
 export default function Home() {
   return (
     <>
@@ -57,6 +62,18 @@ export default function Home() {
                 <span>بحث</span>
               </Button>
             </form>
+          </div>
+          <div className="mt-8 w-full max-w-4xl mx-auto">
+             <div className="flex flex-wrap items-center justify-center gap-2">
+                 <span className="text-sm font-medium text-muted-foreground ml-2">أشهر المناطق:</span>
+                 {locations.map(loc => (
+                    <Button key={loc} variant="outline" size="sm" className="rounded-full hover:bg-primary/10 hover:border-primary/50 transition-colors duration-200">
+                        <Link href={`/jobs?location=${loc}`}>
+                           {loc}
+                        </Link>
+                    </Button>
+                 ))}
+             </div>
           </div>
         </div>
       </section>
