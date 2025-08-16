@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { UserNav } from '@/components/auth/user-nav';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-import { Menu, ShieldCheck, Briefcase } from 'lucide-react';
+import { Menu, ShieldCheck, Briefcase, MessageSquare } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ import { ADMIN_EMAIL } from '@/lib/config';
 const navLinks = [
   { href: '/', label: 'الرئيسية' },
   { href: '/jobs', label: 'ابحث عن فرصة' },
+  { href: '/community', label: 'المجتمع' },
   { href: '/employers', label: 'لأصحاب العمل' },
 ];
 
