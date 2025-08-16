@@ -32,7 +32,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Eye } from "lucide-react";
+import { Switch } from "@/components/ui/switch"
 
 
 interface Application {
@@ -68,6 +69,7 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true);
   const [userBio, setUserBio] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [isPublic, setIsPublic] = useState(false);
   const [postedJobs, setPostedJobs] = useState<PostedJob[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [newJobTitle, setNewJobTitle] = useState('');
@@ -128,15 +130,13 @@ export default function AccountPage() {
       if (currentUser) {
         setDisplayName(currentUser.displayName || '');
         
-        const userBioRef = ref(db, `users/${currentUser.uid}/bio`);
-        onValue(userBioRef, (snapshot) => setUserBio(snapshot.val() || ''));
-
         const userProfileRef = ref(db, `users/${currentUser.uid}`);
         onValue(userProfileRef, (snapshot) => {
           const data = snapshot.val();
           if (data) {
             setUserBio(data.bio || '');
             setDisplayName(data.displayName || currentUser.displayName || '');
+            setIsPublic(data.isPublic || false);
           }
         });
 
@@ -189,6 +189,7 @@ export default function AccountPage() {
           bio: userBio,
           displayName: displayName,
           email: user.email,
+          isPublic: isPublic,
       });
 
       if (resumeFile) {
@@ -329,6 +330,25 @@ export default function AccountPage() {
               <div className="space-y-2">
                 <Label htmlFor="bio">نبذة عني</Label>
                 <Textarea id="bio" placeholder="تحدث عن مهاراتك وخبراتك..." value={userBio} onChange={(e) => setUserBio(e.target.value)} />
+              </div>
+               <div className="border-t pt-6 space-y-4">
+                  <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border bg-background">
+                      <Label htmlFor="is-public" className="flex flex-col gap-1 cursor-pointer">
+                          <span className="font-semibold">ملف شخصي عام</span>
+                          <span className="font-normal text-xs text-muted-foreground">
+                              السماح لأصحاب العمل برؤية ملفك الشخصي والاتصال بك مباشرة.
+                          </span>
+                      </Label>
+                      <Switch id="is-public" checked={isPublic} onCheckedChange={setIsPublic} />
+                  </div>
+                  {isPublic && user && (
+                    <p className="text-sm text-muted-foreground p-2 rounded-md bg-secondary border">
+                        رابط ملفك العام: 
+                        <Link href={`/profile/${user.uid}`} className="underline text-primary mr-2" target="_blank">
+                          عرض الملف <Eye className="inline h-4 w-4" />
+                        </Link>
+                    </p>
+                  )}
               </div>
             </CardContent>
             <CardFooter className="justify-end">
