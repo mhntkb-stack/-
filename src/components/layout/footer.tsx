@@ -22,7 +22,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li><Link href="/" className="text-sm text-muted-foreground hover:text-primary">الرئيسية</Link></li>
               <li><Link href="/jobs" className="text-sm text-muted-foreground hover:text-primary">ابحث عن فرصة</Link></li>
-              <li><Link href="/employers" className="text-sm text-muted-foreground hover:text-primary">لأصحاب العمل</Link></li>
+              <li><Link href="/account" className="text-sm text-muted-foreground hover:text-primary">حسابي</Link></li>
             </ul>
           </div>
 

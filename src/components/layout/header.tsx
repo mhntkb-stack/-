@@ -15,7 +15,6 @@ import { ADMIN_EMAIL } from '@/lib/config';
 const navLinks = [
   { href: '/', label: 'الرئيسية' },
   { href: '/jobs', label: 'ابحث عن فرصة' },
-  { href: '/employers', label: 'لأصحاب العمل' },
 ];
 
 export default function Header() {
