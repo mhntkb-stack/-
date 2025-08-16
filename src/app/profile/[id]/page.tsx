@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage';
 import { app } from '@/lib/firebase';
-import { UserProfile } from '@/components/craftsman-card';
+import { UserProfile } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -110,7 +110,7 @@ export default function PublicProfilePage() {
         <Card className="max-w-3xl mx-auto shadow-lg">
             <CardHeader className="text-center items-center pb-8 pt-10 bg-card rounded-t-lg">
                 <Avatar className="h-28 w-28 border-4 border-primary shadow-md">
-                    <AvatarImage src="https://placehold.co/100x100.png" alt={profile.displayName} data-ai-hint="user avatar" />
+                    <AvatarImage src={`https://placehold.co/112x112.png`} alt={profile.displayName} data-ai-hint="user avatar" />
                     <AvatarFallback className="text-4xl">{userInitial}</AvatarFallback>
                 </Avatar>
                 <CardTitle className="text-3xl pt-4 font-headline">{profile.displayName}</CardTitle>

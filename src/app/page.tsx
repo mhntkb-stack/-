@@ -10,6 +10,8 @@ import { featuredJobs } from '@/lib/jobs-data';
 import { Target, Briefcase, Users } from 'lucide-react';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 
 const categories = [
   { name: 'البناء والإنشاءات', icon: <Building className="h-8 w-8" /> },
@@ -44,8 +46,18 @@ const locations = [
 ];
 
 export default function Home() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
   const [locationQuery, setLocationQuery] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if(searchQuery) params.append('q', searchQuery);
+    if(locationQuery) params.append('loc', locationQuery);
+    router.push(`/jobs?${params.toString()}`);
+  }
 
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -77,20 +89,17 @@ export default function Home() {
             منصتك الأولى للفرص الحرفية والمهنية في صنعاء.
           </p>
           <div className="w-full max-w-3xl mx-auto flex flex-col gap-4">
-            <form className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
+            <form onSubmit={handleSearch} className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
                 <div className="relative md:col-span-3">
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
                     <Input
                         type="text"
                         placeholder="ابحث عن حرفة, مهارة, أو وظيفة..."
                         className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
-                <Button type="submit" size="lg" className="md:col-span-1 h-12 rounded-lg transition-transform transform hover:scale-105 w-full">
-                    <span>بحث</span>
-                </Button>
-            </form>
-             <form className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
                 <div className="relative md:col-span-3">
                     <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
                     <Input
@@ -118,8 +127,8 @@ export default function Home() {
                       </div>
                     )}
                 </div>
-                <Button type="submit" size="lg" className="md:col-span-1 h-12 rounded-lg transition-transform transform hover:scale-105 w-full" variant="secondary">
-                    <span>بحث بالموقع</span>
+                <Button type="submit" size="lg" className="md:col-span-1 h-12 rounded-lg transition-transform transform hover:scale-105 w-full col-span-full">
+                    <span>بحث</span>
                 </Button>
             </form>
             <div className="mt-8">
@@ -129,7 +138,7 @@ export default function Home() {
                     width={700}
                     height={400}
                     className="rounded-2xl mx-auto shadow-lg object-cover"
-                    data-ai-hint="craftsman tools"
+                    data-ai-hint="craftsmen tools"
                 />
             </div>
           </div>

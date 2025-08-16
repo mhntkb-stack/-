@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { getDatabase, ref, onValue, push, serverTimestamp, set } from 'firebase/database';
+import { getDatabase, ref, onValue, push, serverTimestamp, set, runTransaction } from 'firebase/database';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
@@ -10,7 +10,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { MessageSquare, Send } from 'lucide-react';
 import Link from 'next/link';
-import { CommunityPostCard, Post } from '@/components/community-post-card';
+import { CommunityPostCard } from '@/components/community-post-card';
+import { Post } from '@/lib/types';
+
 
 export default function CommunityPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -37,6 +39,8 @@ export default function CommunityPage() {
           .map((key) => ({
             id: key,
             ...postsData[key],
+            likes: postsData[key].likes || {},
+            comments: postsData[key].comments || {},
           }))
           .sort((a, b) => b.createdAt - a.createdAt); // Sort by newest first
         setPosts(postsList);
@@ -80,6 +84,8 @@ export default function CommunityPage() {
         authorName: user.displayName || 'مستخدم مجهول',
         authorEmail: user.email,
         createdAt: serverTimestamp(),
+        likes: {},
+        comments: {},
       });
       setNewPostContent('');
       toast({
@@ -97,6 +103,27 @@ export default function CommunityPage() {
       setIsSubmitting(false);
     }
   };
+  
+    const handleLike = (postId: string) => {
+    if (!user) return;
+    const postRef = ref(db, `community_posts/${postId}/likes/${user.uid}`);
+    runTransaction(postRef, (currentData) => {
+      return currentData ? null : true;
+    });
+  };
+
+  const handleComment = (postId: string, commentText: string) => {
+    if (!user || !commentText.trim()) return;
+    const commentsRef = ref(db, `community_posts/${postId}/comments`);
+    const newCommentRef = push(commentsRef);
+    set(newCommentRef, {
+      text: commentText,
+      authorId: user.uid,
+      authorName: user.displayName || 'مستخدم مجهول',
+      createdAt: serverTimestamp(),
+    });
+  };
+
 
   if (loading) {
     return <div className="container py-12 text-center">جارٍ التحميل...</div>;
@@ -154,7 +181,13 @@ export default function CommunityPage() {
           <h2 className="text-2xl font-bold font-headline text-center">آخر المشاركات</h2>
           {posts.length > 0 ? (
             posts.map((post) => (
-              <CommunityPostCard key={post.id} post={post} />
+              <CommunityPostCard 
+                key={post.id} 
+                post={post} 
+                currentUser={user} 
+                onLike={handleLike} 
+                onComment={handleComment} 
+                />
             ))
           ) : (
             <p className="text-center text-muted-foreground py-8">

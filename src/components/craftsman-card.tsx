@@ -5,14 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { UserProfile } from '@/lib/types';
 
-export interface UserProfile {
-  uid: string;
-  displayName: string;
-  email: string;
-  bio?: string;
-  isPublic?: boolean;
-}
 
 interface CraftsmanCardProps {
   user: UserProfile;
@@ -25,7 +19,7 @@ export default function CraftsmanCard({ user }: CraftsmanCardProps) {
     <Card className="flex flex-col h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-16 w-16 border-2 border-primary">
-          <AvatarImage src="https://placehold.co/100x100.png" alt={user.displayName} data-ai-hint="user avatar" />
+          <AvatarImage src={`https://placehold.co/64x64.png`} alt={user.displayName} data-ai-hint="user avatar" />
           <AvatarFallback className="text-2xl">{userInitial}</AvatarFallback>
         </Avatar>
         <div>

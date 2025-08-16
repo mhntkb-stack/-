@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getDatabase, ref, onValue } from 'firebase/database';
+import { getDatabase, ref, onValue, query, orderByChild, equalTo } from 'firebase/database';
 import { app } from '@/lib/firebase';
-import CraftsmanCard, { UserProfile } from '@/components/craftsman-card';
+import CraftsmanCard from '@/components/craftsman-card';
 import { Frown, Users } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { UserProfile } from '@/lib/types';
+
 
 export default function CraftsmenPage() {
   const [craftsmen, setCraftsmen] = useState<UserProfile[]>([]);
@@ -13,17 +15,15 @@ export default function CraftsmenPage() {
 
   useEffect(() => {
     const db = getDatabase(app);
-    const usersRef = ref(db, 'users');
+    const usersRef = query(ref(db, 'users'), orderByChild('isPublic'), equalTo(true));
 
     const unsubscribe = onValue(usersRef, (snapshot) => {
       if (snapshot.exists()) {
         const usersData = snapshot.val();
-        const allUsers: UserProfile[] = Object.keys(usersData).map(key => ({
+        const publicCraftsmen: UserProfile[] = Object.keys(usersData).map(key => ({
           uid: key,
           ...usersData[key]
         }));
-        
-        const publicCraftsmen = allUsers.filter(user => user.isPublic);
         setCraftsmen(publicCraftsmen);
       } else {
         setCraftsmen([]);
