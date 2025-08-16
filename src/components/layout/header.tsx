@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { ADMIN_EMAIL } from '@/lib/config';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const navLinks = [
   { href: '/', label: 'الرئيسية' },
@@ -26,16 +27,6 @@ export default function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Apply theme from localStorage on initial client load
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-    } else {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.classList.toggle('dark', prefersDark);
-    }
-
-
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -140,6 +131,7 @@ export default function Header() {
 
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+            <ThemeToggle />
           {user ? (
             <UserNav />
           ) : (
