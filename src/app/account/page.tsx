@@ -13,7 +13,7 @@ import { app } from '@/lib/firebase';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getDatabase, ref, onValue, set, push, serverTimestamp, get } from "firebase/database";
+import { getDatabase, ref, onValue, set, push, serverTimestamp, get, update } from "firebase/database";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 import {
@@ -24,6 +24,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { MoreHorizontal } from "lucide-react";
 
 
 interface Application {
@@ -36,10 +45,12 @@ interface Application {
 
 interface Applicant {
     id: string;
+    appId: string;
     name?: string;
     email?: string;
     appliedAt: string;
     resumeUrl?: string;
+    status: string;
 }
 
 interface PostedJob {
@@ -80,7 +91,8 @@ export default function AccountPage() {
       for (const userId in allApplications) {
           const userApplications = allApplications[userId];
           for (const appId in userApplications) {
-              if (userApplications[appId].jobId === jobId) {
+              const applicationData = userApplications[appId];
+              if (applicationData.jobId === jobId) {
                   const userRef = ref(db, `users/${userId}`);
                   const userSnapshot = await get(userRef);
                   const userData = userSnapshot.val();
@@ -95,10 +107,12 @@ export default function AccountPage() {
                   
                   jobApplicants.push({
                       id: userId,
+                      appId: appId,
                       name: userData?.displayName || 'غير متوفر',
                       email: userData?.email || 'غير متوفر',
-                      appliedAt: userApplications[appId].appliedAt ? format(new Date(userApplications[appId].appliedAt), 'yyyy-MM-dd') : 'N/A',
-                      resumeUrl: applicantResumeUrl
+                      appliedAt: applicationData.appliedAt ? format(new Date(applicationData.appliedAt), 'yyyy-MM-dd') : 'N/A',
+                      resumeUrl: applicantResumeUrl,
+                      status: applicationData.status,
                   });
               }
           }
@@ -114,6 +128,15 @@ export default function AccountPage() {
         
         const userBioRef = ref(db, `users/${currentUser.uid}/bio`);
         onValue(userBioRef, (snapshot) => setUserBio(snapshot.val() || ''));
+
+        const userProfileRef = ref(db, `users/${currentUser.uid}`);
+        onValue(userProfileRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            setUserBio(data.bio || '');
+            setDisplayName(data.displayName || currentUser.displayName || '');
+          }
+        });
 
         const resumeRef = storageRef(storage, `resumes/${currentUser.uid}/resume.pdf`);
         getDownloadURL(resumeRef).then(setResumeUrl).catch(() => setResumeUrl(null));
@@ -203,6 +226,35 @@ export default function AccountPage() {
         toast({ variant: 'destructive', title: "خطأ", description: "فشل نشر الوظيفة." });
     }
   };
+
+  const handleApplicationStatusChange = async (applicantId: string, appId: string, newStatus: string) => {
+    try {
+      const applicationRef = ref(db, `applications/${applicantId}/${appId}`);
+      await update(applicationRef, { status: newStatus });
+
+      // Refresh the specific job's applicants list
+      setPostedJobs(prevJobs => prevJobs.map(job => {
+          if (job.applicants?.some(a => a.appId === appId)) {
+              return {
+                  ...job,
+                  applicants: job.applicants.map(applicant => 
+                      applicant.appId === appId ? { ...applicant, status: newStatus } : applicant
+                  )
+              };
+          }
+          return job;
+      }));
+
+      toast({
+          title: 'نجاح',
+          description: `تم تحديث حالة الطلب إلى "${newStatus}".`
+      });
+    } catch (error) {
+        console.error("Error updating application status:", error);
+        toast({ variant: 'destructive', title: "خطأ", description: "فشل تحديث حالة الطلب." });
+    }
+  };
+
 
   if (loading) {
     return <div className="container py-12 text-center">جارٍ تحميل بيانات الحساب...</div>;
@@ -296,7 +348,7 @@ export default function AccountPage() {
                           <TableCell className="whitespace-nowrap">{app.company}</TableCell>
                           <TableCell className="whitespace-nowrap">{app.appliedAt}</TableCell>
                           <TableCell>
-                            <Badge variant={app.status === 'مرفوض' ? 'destructive' : app.status === 'تم العرض' ? 'default': 'secondary'}>{app.status}</Badge>
+                            <Badge variant={app.status === 'مرفوض' ? 'destructive' : app.status === 'مقبول' ? 'default': 'secondary'}>{app.status}</Badge>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -341,7 +393,7 @@ export default function AccountPage() {
                                   عرض المتقدمين ({job.applicants?.length || 0})
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent className="max-w-2xl">
+                              <DialogContent className="max-w-4xl">
                                 <DialogHeader>
                                   <DialogTitle>المتقدمون لوظيفة: {job.title}</DialogTitle>
                                   <DialogDescription>
@@ -353,27 +405,54 @@ export default function AccountPage() {
                                         <TableHeader>
                                             <TableRow>
                                                 <TableHead>الاسم</TableHead>
-                                                <TableHead>البريد الإلكتروني</TableHead>
                                                 <TableHead>تاريخ التقديم</TableHead>
-                                                <TableHead>الإجراء</TableHead>
+                                                <TableHead>الحالة</TableHead>
+                                                <TableHead>السيرة الذاتية</TableHead>
+                                                <TableHead>الإجراءات</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
                                             {job.applicants.map(applicant => (
                                                 <TableRow key={applicant.id}>
-                                                    <TableCell>{applicant.name}</TableCell>
-                                                    <TableCell>{applicant.email}</TableCell>
+                                                    <TableCell className="font-medium">{applicant.name}</TableCell>
                                                     <TableCell>{applicant.appliedAt}</TableCell>
+                                                    <TableCell>
+                                                      <Badge variant={applicant.status === 'مرفوض' ? 'destructive' : applicant.status === 'مقبول' ? 'default' : 'secondary'}>
+                                                          {applicant.status}
+                                                      </Badge>
+                                                    </TableCell>
                                                     <TableCell>
                                                       {applicant.resumeUrl ? (
                                                         <Button variant="link" size="sm" asChild>
                                                           <a href={applicant.resumeUrl} target="_blank" rel="noopener noreferrer">
-                                                            عرض السيرة
+                                                            عرض
                                                           </a>
                                                         </Button>
                                                       ) : (
                                                         <span className="text-xs text-muted-foreground">لا يوجد</span>
                                                       )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                       <DropdownMenu>
+                                                          <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                                              <span className="sr-only">فتح القائمة</span>
+                                                              <MoreHorizontal className="h-4 w-4" />
+                                                            </Button>
+                                                          </DropdownMenuTrigger>
+                                                          <DropdownMenuContent align="end">
+                                                            <DropdownMenuLabel>تغيير الحالة</DropdownMenuLabel>
+                                                            <DropdownMenuItem onClick={() => handleApplicationStatusChange(applicant.id, applicant.appId, 'تحت المراجعة')}>
+                                                              تحت المراجعة
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleApplicationStatusChange(applicant.id, applicant.appId, 'مقبول')}>
+                                                              مقبول
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleApplicationStatusChange(applicant.id, applicant.appId, 'مرفوض')}>
+                                                              مرفوض
+                                                            </DropdownMenuItem>
+                                                          </DropdownMenuContent>
+                                                        </DropdownMenu>
                                                     </TableCell>
                                                 </TableRow>
                                             ))}

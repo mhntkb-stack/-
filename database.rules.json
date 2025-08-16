@@ -9,13 +9,22 @@
     "jobs": {
       ".read": true,
       "$uid": {
+        // Anyone can read jobs, but only the owner can write to their own job list
         ".write": "auth != null && auth.uid == $uid"
       }
     },
     "applications": {
-      "$uid": {
-        ".read": "auth != null && auth.uid == $uid",
-        ".write": "auth != null && auth.uid == $uid"
+      // Loop through each user's applications
+      "$userId": {
+        // A user can only read their own applications
+        ".read": "auth != null && auth.uid == $userId",
+        // A user can only write to their own application list
+        ".write": "auth != null && auth.uid == $userId",
+        // Loop through each application
+        "$appId": {
+           // The owner of the job associated with the application can update its status
+          ".write": "auth != null && (auth.uid == $userId || root.child('jobs/' + root.child('applications/' + $userId + '/' + $appId + '/ownerId').val() + '/' + root.child('applications/' + $userId + '/' + $appId + '/jobId').val() + '/ownerId').val() === auth.uid)"
+        }
       }
     },
     "community_posts": {

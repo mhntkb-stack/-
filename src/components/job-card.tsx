@@ -6,7 +6,7 @@ import { MapPin, Briefcase, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 import { getAuth } from 'firebase/auth';
 import { app } from '@/lib/firebase';
-import { getDatabase, ref, set, serverTimestamp, push } from 'firebase/database';
+import { getDatabase, ref, set, serverTimestamp, push, get } from 'firebase/database';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -40,6 +40,27 @@ export default function JobCard({ id, title, company, location, type, logo, data
 
     try {
       const db = getDatabase(app);
+      
+      // Get the job owner's ID
+      const jobRef = ref(db, `jobs`);
+      const jobSnapshot = await get(jobRef);
+      let ownerId = null;
+
+      if(jobSnapshot.exists()){
+        const allJobsByOwner = jobSnapshot.val();
+        for(const owner in allJobsByOwner){
+          if(allJobsByOwner[owner][id]){
+            ownerId = owner;
+            break;
+          }
+        }
+      }
+      
+      if(!ownerId){
+         toast({ variant: 'destructive', title: 'خطأ', description: 'لم يتم العثور على صاحب العمل.' });
+         return;
+      }
+
       const applicationsRef = ref(db, `applications/${user.uid}`);
       const newApplicationRef = push(applicationsRef);
       await set(newApplicationRef, {
@@ -48,6 +69,7 @@ export default function JobCard({ id, title, company, location, type, logo, data
         company: company,
         status: 'تحت المراجعة',
         appliedAt: serverTimestamp(),
+        ownerId: ownerId, // Store the job owner's ID
       });
       toast({
         title: 'تم التقديم بنجاح!',
