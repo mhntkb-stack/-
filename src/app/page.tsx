@@ -45,17 +45,22 @@ const locations = [
   'باب اليمن', 'صباحة', 'الجامعة', 'الحي السياسي'
 ];
 
+const jobTitleSuggestions = [
+    'نجار', 'سباك', 'كهربائي', 'دهان', 'فني تكييف', 'مهندس معماري', 'مطور برامج', 'خياط'
+];
+
 export default function Home() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [locationQuery, setLocationQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
+  const [showJobSuggestions, setShowJobSuggestions] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if(searchQuery) params.append('q', searchQuery);
-    if(locationQuery) params.append('loc', locationQuery);
+    if (searchQuery) params.append('keywords', searchQuery);
+    if (locationQuery) params.append('location', locationQuery);
     router.push(`/jobs?${params.toString()}`);
   }
 
@@ -66,16 +71,32 @@ export default function Home() {
       const filteredSuggestions = locations.filter(loc =>
         loc.toLowerCase().includes(value.toLowerCase())
       );
-      setSuggestions(filteredSuggestions);
+      setLocationSuggestions(filteredSuggestions);
     } else {
-      setSuggestions([]);
+      setLocationSuggestions([]);
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleLocationSuggestionClick = (suggestion: string) => {
     setLocationQuery(suggestion);
-    setSuggestions([]);
+    setLocationSuggestions([]);
   };
+
+  const handleJobTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    if (value.length > 0) {
+        setShowJobSuggestions(false);
+    } else {
+        setShowJobSuggestions(true);
+    }
+  }
+
+  const handleJobSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowJobSuggestions(false);
+  };
+
 
   return (
     <>
@@ -90,35 +111,25 @@ export default function Home() {
           </p>
           <div className="w-full max-w-3xl mx-auto flex flex-col gap-4">
             <form onSubmit={handleSearch} className="w-full grid grid-cols-1 md:grid-cols-4 items-center gap-2 bg-card p-2 rounded-xl border shadow-sm">
-                <div className="relative md:col-span-3">
+                <div className="relative md:col-span-2">
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
                     <Input
                         type="text"
                         placeholder="ابحث عن حرفة, مهارة, أو وظيفة..."
                         className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={handleJobTitleChange}
+                        onFocus={() => setShowJobSuggestions(true)}
+                        onBlur={() => setTimeout(() => setShowJobSuggestions(false), 200)}
                     />
-                </div>
-                <div className="relative md:col-span-3">
-                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
-                    <Input
-                        type="text"
-                        placeholder="ابحث حسب المنطقة أو الحي..."
-                        className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
-                        value={locationQuery}
-                        onChange={handleLocationChange}
-                        onFocus={() => { if(locationQuery) setSuggestions(locations.filter(loc => loc.toLowerCase().includes(locationQuery.toLowerCase())))}}
-                        onBlur={() => setTimeout(() => setSuggestions([]), 100)}
-                    />
-                    {suggestions.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 bg-card border shadow-lg rounded-md mt-2 z-10 text-right">
+                     {showJobSuggestions && (
+                      <div className="absolute top-full left-0 right-0 bg-card border shadow-lg rounded-md mt-2 z-20 text-right">
                         <ul className="py-2">
-                          {suggestions.map((suggestion, index) => (
+                          {jobTitleSuggestions.map((suggestion, index) => (
                             <li
                               key={index}
                               className="px-4 py-2 hover:bg-accent cursor-pointer"
-                              onClick={() => handleSuggestionClick(suggestion)}
+                              onClick={() => handleJobSuggestionClick(suggestion)}
                             >
                               {suggestion}
                             </li>
@@ -127,7 +138,34 @@ export default function Home() {
                       </div>
                     )}
                 </div>
-                <Button type="submit" size="lg" className="md:col-span-1 h-12 rounded-lg transition-transform transform hover:scale-105 w-full col-span-full">
+                <div className="relative md:col-span-2">
+                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+                    <Input
+                        type="text"
+                        placeholder="ابحث حسب المنطقة أو الحي..."
+                        className="w-full pr-10 pl-3 py-3 h-12 text-base rounded-lg border-none focus-visible:ring-offset-0 focus-visible:ring-1 bg-transparent"
+                        value={locationQuery}
+                        onChange={handleLocationChange}
+                        onFocus={() => { if(locationQuery) setLocationSuggestions(locations.filter(loc => loc.toLowerCase().includes(locationQuery.toLowerCase())))}}
+                        onBlur={() => setTimeout(() => setLocationSuggestions([]), 100)}
+                    />
+                    {locationSuggestions.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 bg-card border shadow-lg rounded-md mt-2 z-10 text-right">
+                        <ul className="py-2">
+                          {locationSuggestions.map((suggestion, index) => (
+                            <li
+                              key={index}
+                              className="px-4 py-2 hover:bg-accent cursor-pointer"
+                              onClick={() => handleLocationSuggestionClick(suggestion)}
+                            >
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                </div>
+                <Button type="submit" size="lg" className="md:col-span-full h-12 rounded-lg transition-transform transform hover:scale-105 w-full col-span-full">
                     <span>بحث</span>
                 </Button>
             </form>
