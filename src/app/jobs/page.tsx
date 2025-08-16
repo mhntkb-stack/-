@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,16 +19,42 @@ export default function JobsPage() {
     const [location, setLocation] = useState('');
     const [jobTypes, setJobTypes] = useState<string[]>([]);
     const [experience, setExperience] = useState('');
+    const [isMounted, setIsMounted] = useState(false);
+
+    // Load filters from localStorage on initial client-side render
+    useEffect(() => {
+        setIsMounted(true);
+        const savedKeywords = localStorage.getItem('job_keywords');
+        const savedLocation = localStorage.getItem('job_location');
+        const savedJobTypes = localStorage.getItem('job_types');
+        const savedExperience = localStorage.getItem('job_experience');
+
+        if (savedKeywords) setKeywords(savedKeywords);
+        if (savedLocation) setLocation(savedLocation);
+        if (savedJobTypes) setJobTypes(JSON.parse(savedJobTypes));
+        if (savedExperience) setExperience(savedExperience);
+    }, []);
+
+    // Save filters to localStorage whenever they change
+    useEffect(() => {
+        if (isMounted) {
+            localStorage.setItem('job_keywords', keywords);
+            localStorage.setItem('job_location', location);
+            localStorage.setItem('job_types', JSON.stringify(jobTypes));
+            localStorage.setItem('job_experience', experience);
+            handleFilter();
+        }
+    }, [keywords, location, jobTypes, experience, isMounted]);
 
     const handleFilter = () => {
         let jobs = allJobs;
 
         if (keywords) {
-            jobs = jobs.filter(job => job.title.includes(keywords) || job.company.includes(keywords));
+            jobs = jobs.filter(job => job.title.toLowerCase().includes(keywords.toLowerCase()) || job.company.toLowerCase().includes(keywords.toLowerCase()));
         }
 
         if (location) {
-            jobs = jobs.filter(job => job.location.includes(location));
+            jobs = jobs.filter(job => job.location.toLowerCase().includes(location.toLowerCase()));
         }
 
         if (jobTypes.length > 0) {
@@ -49,7 +75,17 @@ export default function JobsPage() {
             setJobTypes(prev => prev.filter(t => t !== type));
         }
     };
+    
+    const resetFilters = () => {
+        setKeywords('');
+        setLocation('');
+        setJobTypes([]);
+        setExperience('');
+    };
 
+    if (!isMounted) {
+        return null; // or a loading skeleton
+    }
 
     return (
         <div className="container py-8 md:py-12">
@@ -71,21 +107,21 @@ export default function JobsPage() {
                                 <div className="grid gap-2">
                                     <Label>نوع الوظيفة</Label>
                                     <div className="flex items-center space-x-2 space-x-reverse">
-                                        <Checkbox id="full-time" onCheckedChange={(checked) => handleJobTypeChange(checked, 'دوام كامل')} />
+                                        <Checkbox id="full-time" checked={jobTypes.includes('دوام كامل')} onCheckedChange={(checked) => handleJobTypeChange(checked, 'دوام كامل')} />
                                         <Label htmlFor="full-time" className="font-normal">دوام كامل</Label>
                                     </div>
                                     <div className="flex items-center space-x-2 space-x-reverse">
-                                        <Checkbox id="part-time" onCheckedChange={(checked) => handleJobTypeChange(checked, 'دوام جزئي')} />
+                                        <Checkbox id="part-time" checked={jobTypes.includes('دوام جزئي')} onCheckedChange={(checked) => handleJobTypeChange(checked, 'دوام جزئي')} />
                                         <Label htmlFor="part-time" className="font-normal">دوام جزئي</Label>
                                     </div>
                                     <div className="flex items-center space-x-2 space-x-reverse">
-                                        <Checkbox id="contract" onCheckedChange={(checked) => handleJobTypeChange(checked, 'عقد')} />
+                                        <Checkbox id="contract" checked={jobTypes.includes('عقد')} onCheckedChange={(checked) => handleJobTypeChange(checked, 'عقد')} />
                                         <Label htmlFor="contract" className="font-normal">عقد</Label>
                                     </div>
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="experience">مستوى الخبرة</Label>
-                                    <Select onValueChange={value => setExperience(value)}>
+                                    <Select value={experience} onValueChange={value => setExperience(value)}>
                                         <SelectTrigger id="experience">
                                             <SelectValue placeholder="اختر المستوى" />
                                         </SelectTrigger>
@@ -121,13 +157,7 @@ export default function JobsPage() {
                            <p className="text-muted-foreground max-w-xs">
                              حاول تعديل معايير البحث أو توسيع نطاقه للعثور على ما تبحث عنه.
                            </p>
-                           <Button variant="outline" onClick={() => {
-                               setFilteredJobs(allJobs);
-                               setKeywords('');
-                               setLocation('');
-                               setJobTypes([]);
-                               setExperience('');
-                           }}>إعادة تعيين الفلاتر</Button>
+                           <Button variant="outline" onClick={resetFilters}>إعادة تعيين الفلاتر</Button>
                          </Card>
                     )}
                      <div className="mt-8 flex justify-center">
