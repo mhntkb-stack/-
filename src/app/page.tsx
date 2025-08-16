@@ -124,7 +124,7 @@ export default function Home() {
             </form>
             <div className="mt-8">
                  <Image
-                    src="https://storage.googleapis.com/aifirebase-dev-images-02a80.appspot.com/aipromptui--5c6780c8-ab32-4290-a548-6a56e72b0cb3.jpeg"
+                    src="https://placehold.co/700x400.png"
                     alt="مجموعة من الحرفيين"
                     width={700}
                     height={400}
