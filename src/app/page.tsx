@@ -124,8 +124,8 @@ export default function Home() {
             </form>
             <div className="mt-8">
                  <Image
-                    src="https://placehold.co/700x400.png"
-                    alt="حرفي مبتسم"
+                    src="https://storage.googleapis.com/aifirebase-dev-images-02a80.appspot.com/aipromptui--d9501538-2396-4113-870a-11500f40d6c5.jpeg"
+                    alt="مجموعة من الحرفيين"
                     width={700}
                     height={400}
                     className="rounded-2xl mx-auto shadow-lg object-cover"
