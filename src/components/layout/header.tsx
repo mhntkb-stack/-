@@ -15,6 +15,7 @@ import { ADMIN_EMAIL } from '@/lib/config';
 const navLinks = [
   { href: '/', label: 'الرئيسية' },
   { href: '/jobs', label: 'ابحث عن فرصة' },
+  { href: '/employers', label: 'لأصحاب العمل' },
 ];
 
 export default function Header() {
@@ -51,7 +52,6 @@ export default function Header() {
                     href={link.href}
                     className={cn(
                         "transition-colors hover:text-primary px-3 py-2 rounded-md",
-                        link.href === '/' ? 'mr-6' : '',
                         pathname === link.href ? "text-foreground font-bold" : "text-foreground/70"
                     )}
                     >
