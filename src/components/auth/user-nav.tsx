@@ -10,24 +10,46 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
+  DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
-import { User, Settings, LifeBuoy, LogOut } from 'lucide-react';
+import { User, Settings, LifeBuoy, LogOut, Bell, CheckCheck } from 'lucide-react';
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
+import { getDatabase, ref, onValue, update } from "firebase/database";
+import { formatDistanceToNow } from 'date-fns';
+import { ar } from 'date-fns/locale';
+
+interface Notification {
+    id: string;
+    message: string;
+    link: string;
+    read: boolean;
+    createdAt: number;
+}
 
 export function UserNav() {
   const router = useRouter();
   const { toast } = useToast();
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+  const user = auth.currentUser;
+
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userInitial, setUserInitial] = useState('');
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [hasUnread, setHasUnread] = useState(false);
 
   useEffect(() => {
-    const auth = getAuth(app);
+    if (!user) return;
+
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
         setUserName(user.displayName || 'مستخدم');
@@ -35,12 +57,31 @@ export function UserNav() {
         setUserInitial(user.displayName ? user.displayName.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : 'U'));
       }
     });
-    return () => unsubscribe();
-  }, []);
+
+    const notificationsRef = ref(db, `notifications/${user.uid}`);
+    const unsubscribeNotifications = onValue(notificationsRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            const notificationsList: Notification[] = Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            })).sort((a,b) => b.createdAt - a.createdAt);
+            setNotifications(notificationsList);
+            setHasUnread(notificationsList.some(n => !n.read));
+        } else {
+            setNotifications([]);
+            setHasUnread(false);
+        }
+    });
+
+    return () => {
+        unsubscribe();
+        unsubscribeNotifications();
+    };
+  }, [user, db, auth]);
   
   const handleLogout = async () => {
     try {
-      const auth = getAuth(app);
       await signOut(auth);
       toast({
         title: "تم تسجيل الخروج بنجاح",
@@ -53,6 +94,20 @@ export function UserNav() {
       });
     }
   };
+
+  const handleMarkAsRead = () => {
+    if (!user || !hasUnread) return;
+    const updates: { [key: string]: boolean } = {};
+    notifications.forEach(n => {
+        if (!n.read) {
+            updates[`/notifications/${user.uid}/${n.id}/read`] = true;
+        }
+    });
+    if (Object.keys(updates).length > 0) {
+        update(ref(db), updates);
+    }
+  };
+
 
   return (
     <DropdownMenu>
@@ -81,6 +136,37 @@ export function UserNav() {
                 <span>حسابي</span>
              </Link>
           </DropdownMenuItem>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger onFocus={handleMarkAsRead}>
+              <Bell className="ml-2 h-4 w-4" />
+              <span>الإشعارات</span>
+              {hasUnread && <span className="w-2 h-2 rounded-full bg-destructive mr-auto animate-pulse"></span>}
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent className='w-80 max-h-96 overflow-y-auto'>
+                <DropdownMenuLabel>آخر الإشعارات</DropdownMenuLabel>
+                <DropdownMenuSeparator/>
+                {notifications.length > 0 ? (
+                    notifications.map(n => (
+                         <DropdownMenuItem key={n.id} asChild className="text-wrap h-auto cursor-pointer">
+                            <Link href={n.link}>
+                                <div className="flex flex-col gap-1">
+                                    <p className={`text-sm ${!n.read ? 'font-bold' : ''}`}>{n.message}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true, locale: ar })}
+                                    </p>
+                                </div>
+                            </Link>
+                         </DropdownMenuItem>
+                    ))
+                ) : (
+                    <p className="p-4 text-center text-sm text-muted-foreground">لا توجد إشعارات بعد.</p>
+                )}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+          
           <DropdownMenuItem asChild>
              <Link href="/settings">
                 <Settings className="ml-2 h-4 w-4" />

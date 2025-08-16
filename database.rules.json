@@ -33,6 +33,12 @@
       "$postId": {
         ".validate": "newData.hasChildren(['content', 'authorId', 'authorName', 'createdAt']) && newData.child('authorId').val() === auth.uid"
       }
+    },
+    "notifications": {
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId"
+      }
     }
   }
 }
