@@ -64,7 +64,7 @@ export function UserNav() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-64" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{userName}</p>
@@ -81,9 +81,11 @@ export function UserNav() {
                 <span>حسابي</span>
              </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="ml-2 h-4 w-4" />
-            <span>الإعدادات</span>
+          <DropdownMenuItem asChild>
+             <Link href="/settings">
+                <Settings className="ml-2 h-4 w-4" />
+                <span>الإعدادات</span>
+             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <LifeBuoy className="ml-2 h-4 w-4" />

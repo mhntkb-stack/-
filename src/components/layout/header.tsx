@@ -26,6 +26,10 @@ export default function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
+    // Apply theme from localStorage on initial client load
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
