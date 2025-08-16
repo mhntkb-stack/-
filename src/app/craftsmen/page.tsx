@@ -8,6 +8,51 @@ import { Frown, Users } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserProfile } from '@/lib/types';
 
+const exampleCraftsmen: UserProfile[] = [
+  {
+    uid: 'example-1',
+    displayName: 'علي صالح',
+    email: 'ali.saleh@example.com',
+    bio: 'نجار محترف بخبرة تتجاوز 15 عاماً في صناعة الأثاث المودرن والكلاسيكي. ملتزم بالجودة والدقة في المواعيد.',
+    isPublic: true,
+  },
+  {
+    uid: 'example-2',
+    displayName: 'فاطمة الأحمدي',
+    email: 'fatima.alahmadi@example.com',
+    bio: 'مصممة ديكور داخلي وخارجي. متخصصة في تحويل المساحات العادية إلى أماكن استثنائية تعكس ذوق العميل.',
+    isPublic: true,
+  },
+  {
+    uid: 'example-3',
+    displayName: 'حسن عبدالله',
+    email: 'hassan.abdullah@example.com',
+    bio: 'فني تبريد وتكييف بخبرة 5 سنوات. أقوم بتركيب وصيانة جميع أنواع المكيفات بجودة عالية وأسعار منافسة.',
+    isPublic: true,
+  },
+   {
+    uid: 'example-4',
+    displayName: 'نورة قاسم',
+    email: 'nora.qasim@example.com',
+    bio: 'خياطة ماهرة في تصميم وخياطة الملابس النسائية والعبايات. أستخدم أجود أنواع الأقمشة وأحدث التصاميم.',
+    isPublic: true,
+  },
+   {
+    uid: 'example-5',
+    displayName: 'خالد المصري',
+    email: 'khaled.masri@example.com',
+    bio: 'سباك متخصص في جميع أعمال السباكة والصرف الصحي للمنازل والمشاريع التجارية. خدمة سريعة وموثوقة.',
+    isPublic: true,
+  },
+    {
+    uid: 'example-6',
+    displayName: 'مريم الزهراني',
+    email: 'mariam.zahrani@example.com',
+    bio: 'رسامة وفنانة تشكيلية. أرسم لوحات فنية حسب الطلب وأقوم بتزيين الجدران برسومات إبداعية.',
+    isPublic: true,
+  }
+];
+
 
 export default function CraftsmenPage() {
   const [craftsmen, setCraftsmen] = useState<UserProfile[]>([]);
@@ -18,15 +63,20 @@ export default function CraftsmenPage() {
     const usersRef = query(ref(db, 'users'), orderByChild('isPublic'), equalTo(true));
 
     const unsubscribe = onValue(usersRef, (snapshot) => {
+      let publicCraftsmen: UserProfile[] = [];
       if (snapshot.exists()) {
         const usersData = snapshot.val();
-        const publicCraftsmen: UserProfile[] = Object.keys(usersData).map(key => ({
+        publicCraftsmen = Object.keys(usersData).map(key => ({
           uid: key,
           ...usersData[key]
         }));
-        setCraftsmen(publicCraftsmen);
+      }
+      
+      // If no real craftsmen are found, use the example data.
+      if (publicCraftsmen.length === 0) {
+        setCraftsmen(exampleCraftsmen);
       } else {
-        setCraftsmen([]);
+        setCraftsmen(publicCraftsmen);
       }
       setLoading(false);
     });
