@@ -1,0 +1,25 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "jobs": {
+      // Allow anyone to read the list of jobs
+      ".read": true,
+      "$uid": {
+         // Allow authenticated users to write to their own job list
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "applications": {
+       "$uid": {
+        // Allow authenticated users to read and write their own applications
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    }
+  }
+}
