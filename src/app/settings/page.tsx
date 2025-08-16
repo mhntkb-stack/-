@@ -7,13 +7,53 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useEffect, useState } from 'react';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { app } from '@/lib/firebase';
+import { getDatabase, ref, get, set, update } from 'firebase/database';
 
 
 export default function SettingsPage() {
     const { toast } = useToast();
+    const [user, setUser] = useState<User | null>(null);
+    const [notificationSettings, setNotificationSettings] = useState({
+      jobReplyNotifications: false,
+      newJobNotifications: false,
+    });
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+            if(currentUser){
+                const settingsRef = ref(db, `users/${currentUser.uid}/notificationSettings`);
+                get(settingsRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        setNotificationSettings(snapshot.val());
+                    }
+                });
+            }
+        });
+        return () => unsubscribe();
+    }, [auth, db]);
+
+    const handleNotificationChange = (key: keyof typeof notificationSettings, value: boolean) => {
+        if (!user) return;
+
+        const newSettings = { ...notificationSettings, [key]: value };
+        setNotificationSettings(newSettings);
+
+        const userRef = ref(db, `users/${user.uid}`);
+        update(userRef, { notificationSettings: newSettings }).catch(error => {
+            toast({ variant: 'destructive', title: 'خطأ', description: 'فشل حفظ الإعدادات.' });
+        });
+    };
 
     const handleCopy = () => {
-        navigator.clipboard.writeText('https://mhntk.com/join/u123xyz');
+        if(!user) return;
+        const inviteLink = `${window.location.origin}/register?ref=${user.uid}`;
+        navigator.clipboard.writeText(inviteLink);
         toast({
             title: 'تم النسخ!',
             description: 'تم نسخ رابط الدعوة إلى الحافظة.',
@@ -33,22 +73,30 @@ export default function SettingsPage() {
           </CardHeader>
            <CardContent className="space-y-6">
                 <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border">
-                    <Label htmlFor="job-reply-notifications" className="flex flex-col gap-1">
+                    <Label htmlFor="job-reply-notifications" className="flex flex-col gap-1 cursor-pointer">
                         <span className="font-semibold">الرد على طلباتي</span>
                         <span className="font-normal text-xs text-muted-foreground">
                             تلقي إشعار عند تغيير حالة طلبات التوظيف التي قدمتها.
                         </span>
                     </Label>
-                    <Switch id="job-reply-notifications" />
+                    <Switch 
+                        id="job-reply-notifications" 
+                        checked={notificationSettings.jobReplyNotifications}
+                        onCheckedChange={(checked) => handleNotificationChange('jobReplyNotifications', checked)}
+                    />
                 </div>
                 <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border">
-                    <Label htmlFor="new-job-notifications" className="flex flex-col gap-1">
+                    <Label htmlFor="new-job-notifications" className="flex flex-col gap-1 cursor-pointer">
                        <span className="font-semibold">وظائف جديدة تهمّني</span>
                         <span className="font-normal text-xs text-muted-foreground">
                            تلقي إشعار عند نشر وظائف جديدة تتناسب مع اهتماماتك.
                         </span>
                     </Label>
-                    <Switch id="new-job-notifications" disabled />
+                    <Switch 
+                        id="new-job-notifications"
+                        checked={notificationSettings.newJobNotifications}
+                        onCheckedChange={(checked) => handleNotificationChange('newJobNotifications', checked)}
+                    />
                 </div>
            </CardContent>
         </Card>
@@ -61,8 +109,8 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
              <div className="flex gap-2">
-                <Input value="https://mhntk.com/join/u123xyz" readOnly />
-                <Button variant="outline" size="icon" onClick={handleCopy} aria-label="نسخ رابط الدعوة">
+                <Input value={user ? `${window.location.origin}/register?ref=${user.uid}` : '...'} readOnly />
+                <Button variant="outline" size="icon" onClick={handleCopy} aria-label="نسخ رابط الدعوة" disabled={!user}>
                     <Copy className="h-4 w-4" />
                 </Button>
             </div>

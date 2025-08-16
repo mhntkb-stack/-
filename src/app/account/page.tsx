@@ -185,7 +185,12 @@ export default function AccountPage() {
     if (!user) return;
     try {
       await updateProfile(user, { displayName: displayName });
-      await set(ref(db, `users/${user.uid}`), {
+      const userRef = ref(db, `users/${user.uid}`);
+      const userSnapshot = await get(userRef);
+      const existingData = userSnapshot.val() || {};
+
+      await set(userRef, {
+          ...existingData,
           bio: userBio,
           displayName: displayName,
           email: user.email,
@@ -222,6 +227,25 @@ export default function AccountPage() {
             status: 'مفتوح',
             ownerId: user.uid,
         });
+
+        const usersRef = ref(db, 'users');
+        const usersSnapshot = await get(usersRef);
+        if (usersSnapshot.exists()) {
+            const usersData = usersSnapshot.val();
+            for (const userId in usersData) {
+                if (usersData[userId]?.notificationSettings?.newJobNotifications) {
+                    const notificationsRef = ref(db, `notifications/${userId}`);
+                    const newNotificationRef = push(notificationsRef);
+                    await set(newNotificationRef, {
+                        message: `تم نشر وظيفة جديدة قد تهمك: "${newJobTitle}"`,
+                        link: `/jobs/${newJobRef.key}`,
+                        read: false,
+                        createdAt: serverTimestamp()
+                    });
+                }
+            }
+        }
+        
         toast({ title: "نجاح", description: "تم نشر الوظيفة بنجاح!" });
         setNewJobTitle('');
         setNewJobDescription('');
