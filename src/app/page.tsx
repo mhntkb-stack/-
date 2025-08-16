@@ -129,7 +129,7 @@ export default function Home() {
                     width={700}
                     height={400}
                     className="rounded-2xl mx-auto shadow-lg object-cover"
-                    data-ai-hint="craftsmen working"
+                    data-ai-hint="craftsman tools"
                 />
             </div>
           </div>
